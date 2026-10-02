@@ -1,405 +1,629 @@
 <!doctype html>
-<html lang="fr">
+<html lang="fr" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Nexora — Tout votre produit dans un seul workspace</title>
-<meta name="description" content="Nexora réunit projets, tâches, documents, design, GitHub, analytics, ASO et marketing dans un seul workspace.">
+<title>Nexora — Un seul workspace, tout votre produit</title>
+<meta name="description" content="Projets, tâches, documents, design, GitHub, analytics, ASO et marketing dans un seul workspace.">
 <style>
-:root{
-  --bg:#f4f7fb;--surface:#fff;--surface2:#eef3f9;--border:#dbe3ee;--fg:#0f1b2d;--muted:#5a6b82;--subtle:#8896aa;
-  --accent:#0b7bbd;--accent-fg:#fff;--accent-soft:rgba(11,123,189,.1);--navy:#101f3a;--violet:#7c6cf0;
-  --ok:#17a363;--warn:#e8a317;--danger:#e5484d;--shadow:0 10px 40px -12px rgba(16,31,58,.18);
-  --code:#1e1e1e;
+/* Tokens copied from web/src/app/globals.css (dark = reference theme, light designed separately) */
+:root,[data-theme=dark]{
+  --bg:#0b0c0f;--surface:#111317;--surface-2:#171a1f;--surface-3:#1e2229;--border:#23272f;--border-strong:#2f343e;
+  --fg:#e8eaee;--muted:#9aa1ad;--subtle:#6b7280;--accent:#3aa0e8;--accent-fg:#fff;--accent-soft:rgba(58,160,232,.16);
+  --success:#3ecf8e;--warning:#f5a524;--danger:#f4585f;--shadow:0 8px 30px rgba(0,0,0,.45);
+  --header-a:#06306b;--header-b:#0a93cc;color-scheme:dark;
 }
-:root[data-theme=dark]{
-  --bg:#0a1220;--surface:#111c2f;--surface2:#16243b;--border:#22324d;--fg:#eaf0f8;--muted:#9aaac0;--subtle:#6c7d95;
-  --accent:#3aa0e8;--accent-soft:rgba(58,160,232,.16);--navy:#0d1830;--shadow:0 10px 40px -12px rgba(0,0,0,.6);
+[data-theme=light]{
+  --bg:#f5f7fa;--surface:#fff;--surface-2:#eff3f8;--surface-3:#e4eaf2;--border:#e1e7ef;--border-strong:#cfd8e3;
+  --fg:#14202e;--muted:#526173;--subtle:#8593a4;--accent:#0b7bbd;--accent-soft:rgba(11,123,189,.1);
+  --success:#12935e;--warning:#b97500;--danger:#d6323a;--shadow:0 6px 24px rgba(20,40,70,.12);color-scheme:light;
 }
-*{box-sizing:border-box;margin:0}
+*{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--fg);line-height:1.6;-webkit-font-smoothing:antialiased}
-a{color:inherit;text-decoration:none}
-.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+body{font:15px/1.6 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--fg);-webkit-font-smoothing:antialiased;overflow-x:clip;min-height:100vh}
+a{color:inherit;text-decoration:none}button{font:inherit;color:inherit;cursor:pointer;background:none;border:0}
+ul,ol{list-style:none}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
-/* lang */
-[data-en]{display:none}
-html[lang=en] [data-fr]{display:none}
-html[lang=en] [data-en]{display:revert}
+.i{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none;vertical-align:-.125em}
+.max{max-width:72rem;margin:0 auto;padding:0 20px}
+.center{text-align:center}
+section[id]{scroll-margin-top:96px}
+/* reveal */
+.js .rv{opacity:0;transform:translateY(18px);transition:opacity .6s cubic-bezier(.2,.7,.2,1),transform .6s cubic-bezier(.2,.7,.2,1)}
+.js .rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.js .rv{opacity:1;transform:none;transition:none}*{animation:none!important}}
+/* shared */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:0 24px;border-radius:12px;font-size:15px;font-weight:600;white-space:nowrap;transition:background .15s,transform .15s,opacity .15s,box-shadow .15s}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--accent);color:var(--accent-fg);box-shadow:0 8px 30px -8px var(--accent)}.btn.primary:hover{opacity:.9}
+.btn.ghost{border:1px solid var(--border-strong);background:color-mix(in oklab,var(--surface) 70%,transparent);backdrop-filter:blur(8px)}.btn.ghost:hover{background:var(--surface-2)}
+.eyebrow{display:inline-block;border:1px solid var(--border-strong);background:var(--surface);border-radius:99px;padding:4px 12px;font-size:12px;font-weight:500;color:var(--muted)}
+h2{font-size:clamp(30px,5vw,48px);font-weight:600;letter-spacing:-.025em;line-height:1.15;text-wrap:balance;margin-top:16px}
+.head{max-width:42rem;margin:0 auto;text-align:center}.head p{margin-top:16px;color:var(--muted)}
+.logo{display:flex;align-items:center;gap:8px;font-weight:600}.logo b{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--accent);color:var(--accent-fg)}
 /* nav */
-nav{position:sticky;top:12px;z-index:50;margin:12px auto 0;max-width:1100px;padding:0 20px}
-.pill{display:flex;align-items:center;gap:20px;background:color-mix(in srgb,var(--surface) 85%,transparent);backdrop-filter:blur(14px);border:1px solid var(--border);border-radius:999px;padding:8px 10px 8px 20px;box-shadow:var(--shadow)}
-.logo{display:flex;align-items:center;gap:9px;font-weight:700;letter-spacing:-.02em}
-.logo i{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--violet));display:block}
-.links{display:flex;gap:4px;margin-left:12px;flex:1}
-.links a{padding:6px 12px;border-radius:999px;font-size:14px;color:var(--muted)}
-.links a:hover{background:var(--surface2);color:var(--fg)}
-.tools{display:flex;gap:6px;align-items:center}
-.ibtn{height:34px;min-width:34px;padding:0 10px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--fg);font:600 12px inherit;cursor:pointer}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:42px;padding:0 20px;border-radius:12px;font-weight:600;font-size:15px;border:1px solid var(--border);background:var(--surface);color:var(--fg);cursor:pointer;white-space:nowrap;transition:transform .15s}
-.btn:hover{transform:translateY(-1px)}
-.btn.primary{background:var(--accent);color:var(--accent-fg);border-color:transparent;box-shadow:0 8px 24px -8px var(--accent)}
-.btn.sm{height:36px;padding:0 16px;font-size:14px;border-radius:999px}
-@media(max-width:860px){.links{display:none}.pill{justify-content:space-between}}
+header.top{position:sticky;top:0;z-index:50;padding:12px 12px 0}
+.navbox{max-width:72rem;margin:0 auto;border:1px solid var(--border);border-radius:16px;background:color-mix(in oklab,var(--bg) 75%,transparent);backdrop-filter:blur(20px);box-shadow:0 4px 30px -12px rgba(0,0,0,.25)}
+.navrow{display:flex;align-items:center;gap:16px;height:56px;padding:0 16px}
+.navlinks{display:none;margin-left:16px;gap:4px;font-size:14px;color:var(--muted)}
+.navlinks a{padding:6px 12px;border-radius:8px;transition:background .15s,color .15s}.navlinks a:hover{background:var(--surface-2);color:var(--fg)}
+.navright{margin-left:auto;display:flex;align-items:center;gap:8px}
+.sq{display:grid;place-items:center;width:36px;height:36px;border-radius:12px;border:1px solid var(--border-strong);font-size:12px;font-weight:600}
+.sq:hover{background:var(--surface-2)}
+.signin{display:none;padding:0 8px;font-size:14px;color:var(--muted)}.signin:hover{color:var(--fg)}
+.start{display:inline-flex;align-items:center;height:36px;padding:0 16px;border-radius:12px;background:var(--accent);color:var(--accent-fg);font-size:13px;font-weight:600}.start:hover{opacity:.9}
+.burger{font-size:16px}
+.mnav{display:none;border-top:1px solid var(--border);padding:12px;gap:4px}
+.mnav.open{display:grid}
+.mnav a{padding:12px;border-radius:12px;font-size:15px}.mnav a:hover{background:var(--surface-2)}
+@media(min-width:640px){.hide-sm{display:flex!important}}
+.hide-sm{display:none;gap:8px;align-items:center}
+@media(min-width:768px){.signin{display:block}}
+@media(min-width:1024px){.navlinks{display:flex}.burger,.mnav{display:none!important}}
 /* hero */
-.hero{padding:88px 0 40px;text-align:center;position:relative;overflow:hidden}
-.hero:before{content:"";position:absolute;inset:-200px -10% auto;height:620px;background:radial-gradient(60% 60% at 50% 40%,var(--accent-soft),transparent 70%);z-index:-1}
-.badge{display:inline-flex;gap:8px;align-items:center;font-size:13px;font-weight:500;color:var(--accent);background:var(--accent-soft);padding:6px 14px;border-radius:999px}
-.badge:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ok)}
-h1{font-size:clamp(40px,7vw,76px);line-height:1.04;letter-spacing:-.035em;font-weight:700;margin:24px auto 0;max-width:900px}
-.grad{background:linear-gradient(100deg,#2d6bd8,var(--accent) 45%,var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
-.sub{max-width:660px;margin:22px auto 0;color:var(--muted);font-size:clamp(16px,2vw,19px)}
-.cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:32px}
-.note{margin-top:14px;font-size:13px;color:var(--subtle)}
-/* app mock */
-.mock{margin:56px auto 0;max-width:1000px;border-radius:20px;background:var(--navy);padding:10px;box-shadow:0 40px 90px -30px rgba(16,31,58,.5);text-align:left}
-.mock-bar{height:38px;border-radius:12px;background:linear-gradient(90deg,#1b4fa8,#2a8ad6);display:flex;align-items:center;gap:6px;padding:0 14px}
-.mock-bar b{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.55)}
-.mock-bar span{margin-left:auto;background:rgba(255,255,255,.2);border-radius:8px;height:20px;width:180px}
-.mock-body{display:grid;grid-template-columns:180px 1fr;gap:10px;margin-top:10px}
-.side{border-radius:14px;background:rgba(255,255,255,.06);padding:12px;display:flex;flex-direction:column;gap:6px;color:#aebbd3;font-size:13px}
-.side div{padding:7px 10px;border-radius:8px}
-.side .on{background:rgba(255,255,255,.14);color:#fff}
-.main{border-radius:14px;background:#f4f7fb;padding:16px;color:#0f1b2d}
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.kpi{background:#fff;border:1px solid #dbe3ee;border-radius:12px;padding:12px}
-.kpi small{color:#5a6b82;font-size:11px}.kpi strong{display:block;font-size:22px;letter-spacing:-.02em}
-.kpi em{font-style:normal;font-size:11px;color:#17a363}
-.board{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
-.col{background:#e9eff7;border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:8px}
-.col h6{font-size:11px;color:#5a6b82;text-transform:uppercase;letter-spacing:.06em}
-.card{background:#fff;border:1px solid #dbe3ee;border-radius:10px;padding:9px 10px;font-size:12px}
-.card i{display:inline-block;font-style:normal;font-size:10px;font-weight:600;padding:1px 7px;border-radius:99px;margin-top:5px;background:var(--accent-soft);color:#0b7bbd}
-@media(max-width:760px){.mock-body{grid-template-columns:1fr}.side{display:none}.kpis{grid-template-columns:repeat(2,1fr)}.board{grid-template-columns:1fr}}
-/* sections */
-section{padding:96px 0}
-.eyebrow{font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
-h2{font-size:clamp(30px,4.4vw,48px);line-height:1.1;letter-spacing:-.03em;margin-top:12px;font-weight:700}
-.lead{color:var(--muted);max-width:640px;margin-top:16px;font-size:17px}
-.center{text-align:center}.center .lead{margin-inline:auto}
-/* flow */
-.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:48px;position:relative}
-.step{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px 16px;text-align:center}
-.step b{display:block;font-size:15px}.step span{font-size:13px;color:var(--muted)}
-.step i{display:grid;place-items:center;width:42px;height:42px;margin:0 auto 12px;border-radius:12px;background:var(--accent-soft);font-style:normal;font-size:20px}
-@media(max-width:860px){.flow{grid-template-columns:repeat(2,1fr)}}
-.chain{margin-top:36px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
-.chain div{background:var(--surface2);border-radius:12px;padding:14px;font-size:14px}
-.chain small{display:block;color:var(--subtle);font-size:11px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
-.chain .main-ticket{background:var(--accent);color:#fff}.chain .main-ticket small{color:rgba(255,255,255,.75)}
-/* features */
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:48px}
-.feat{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:26px;transition:transform .2s,box-shadow .2s}
-.feat:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
-.feat .ic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:22px;background:var(--accent-soft);margin-bottom:16px}
-.feat h3{font-size:19px;letter-spacing:-.01em}
-.feat p{color:var(--muted);font-size:15px;margin-top:8px}
-.feat ul{margin:14px 0 0;padding:0;list-style:none;font-size:14px;color:var(--muted)}
-.feat li{padding:3px 0 3px 22px;position:relative}
-.feat li:before{content:"✓";position:absolute;left:0;color:var(--ok);font-weight:700}
-.tag{display:inline-block;margin-top:14px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:99px;background:var(--surface2);color:var(--muted)}
-@media(max-width:960px){.grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:620px){.grid{grid-template-columns:1fr}}
+.hero{position:relative;overflow:hidden}
+.lp-grid{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(to right,color-mix(in oklab,var(--fg) 6%,transparent) 1px,transparent 1px),linear-gradient(to bottom,color-mix(in oklab,var(--fg) 6%,transparent) 1px,transparent 1px);background-size:56px 56px;-webkit-mask-image:radial-gradient(70% 60% at 50% 0%,#000 30%,transparent 75%);mask-image:radial-gradient(70% 60% at 50% 0%,#000 30%,transparent 75%)}
+.blob{position:absolute;width:420px;height:420px;border-radius:50%;filter:blur(64px);pointer-events:none}
+.hero .in-wrap{position:relative;max-width:72rem;margin:0 auto;padding:64px 20px 80px;text-align:center}
+@media(min-width:640px){.hero .in-wrap{padding-top:96px}}
+.badge{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border-strong);background:color-mix(in oklab,var(--surface) 80%,transparent);backdrop-filter:blur(8px);border-radius:99px;padding:6px 14px;font-size:12px;font-weight:500;color:var(--muted)}
+.dot{position:relative;display:flex;width:6px;height:6px}.dot:before{content:"";position:absolute;inset:0;border-radius:50%;background:var(--success);opacity:.6;animation:ping 1.4s cubic-bezier(0,0,.2,1) infinite}.dot:after{content:"";position:relative;width:6px;height:6px;border-radius:50%;background:var(--success)}
+@keyframes ping{75%,100%{transform:scale(2.4);opacity:0}}
+h1{margin:28px auto 0;max-width:56rem;font-size:clamp(2.6rem,8vw,5.5rem);font-weight:600;line-height:1.02;letter-spacing:-.035em;text-wrap:balance}
+.gt{background:linear-gradient(100deg,var(--header-b),var(--accent) 45%,#8b7cf6);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .sub{margin:24px auto 0;max-width:42rem;font-size:clamp(16px,2vw,18px);color:var(--muted);text-wrap:pretty}
+.ctas{margin-top:36px;display:flex;flex-direction:column;gap:12px;align-items:center;justify-content:center}
+.ctas .btn{width:100%}
+@media(min-width:640px){.ctas{flex-direction:row}.ctas .btn{width:auto}}
+.note{margin-top:16px;font-size:12px;color:var(--subtle)}
+.repl{margin-top:32px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;font-size:12px;color:var(--subtle)}
+.repl span+span{border:1px solid var(--border);background:var(--surface);border-radius:6px;padding:2px 8px;color:var(--muted);text-decoration:line-through;text-decoration-color:color-mix(in oklab,var(--subtle) 60%,transparent)}
+/* showcase */
+.show{max-width:56rem;margin:56px auto 0}
+.tabs{display:flex;gap:4px;max-width:36rem;margin:0 auto 16px;overflow-x:auto;border:1px solid var(--border);background:color-mix(in oklab,var(--surface) 80%,transparent);backdrop-filter:blur(8px);border-radius:16px;padding:4px}
+.tab{position:relative;flex:1;min-width:96px;height:40px;display:flex;align-items:center;justify-content:center;gap:8px;padding:0 12px;border-radius:12px;font-size:13px;font-weight:500;color:var(--muted);overflow:hidden;transition:color .15s}
+.tab:hover{color:var(--fg)}.tab[aria-selected=true]{background:var(--surface-2);color:var(--fg)}
+.tab .bar{position:absolute;left:8px;right:8px;bottom:0;height:2px;border-radius:99px;background:var(--accent);transform-origin:left;transform:scaleX(0)}
+.tab[aria-selected=true] .bar{animation:prog 6s linear forwards}.show.paused .tab .bar{animation:none}
+@keyframes prog{to{transform:scaleX(1)}}
+.tabdesc{text-align:center;font-size:14px;color:var(--muted);margin-bottom:16px;min-height:1.6em}
+.stage{position:relative}
+.stage:before{content:"";position:absolute;inset:-24px -24px -40px;z-index:-1;border-radius:40px;opacity:.7;filter:blur(64px);background:radial-gradient(60% 60% at 50% 40%,color-mix(in oklab,var(--accent) 35%,transparent),transparent)}
+.panel{display:none;animation:swap .28s cubic-bezier(.2,.7,.2,1)}.panel.on{display:block}
+@keyframes swap{from{opacity:0;transform:translateY(12px) scale(.985)}}
+.win{overflow:hidden;border:1px solid var(--border-strong);border-radius:16px;background:var(--bg);text-align:left;font-size:12px;box-shadow:var(--shadow)}
+.wbar{display:flex;align-items:center;gap:12px;height:36px;padding:0 14px;border-bottom:1px solid var(--border);background:var(--surface)}
+.wbar .l{display:flex;gap:6px}.wbar .l i{width:10px;height:10px;border-radius:50%}
+.wbar .url{margin:0 auto;display:flex;align-items:center;justify-content:center;gap:4px;height:20px;width:176px;border-radius:6px;background:var(--surface-2);font-size:10px;color:var(--subtle)}
+@media(min-width:640px){.wbar .url{width:224px}}
+.wbar .sp{width:40px}
+.bar2{height:8px;border-radius:99px;background:var(--surface-3)}
+/* board mock */
+.board{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:12px}
+@media(min-width:640px){.board{gap:12px;padding:16px}}
+.col{display:grid;gap:8px;align-content:start;border-radius:12px;background:var(--surface-2);padding:8px}
+.col h6{display:flex;align-items:center;gap:6px;padding:0 4px;font-size:12px;font-weight:500;color:var(--muted)}
+.col h6 i{width:6px;height:6px;border-radius:50%}
+.kc{border:1px solid var(--border);border-radius:8px;background:var(--surface);padding:8px;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.kc div:first-child{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kc .m{margin-top:8px;display:flex;justify-content:space-between;align-items:center;font-size:10px;color:var(--subtle)}.kc .m code{font-family:ui-monospace,Menlo,monospace}.kc .m i{width:16px;height:16px;border-radius:50%}
+/* doc mock */
+.docm{display:grid;gap:16px;padding:16px}
+.docm .nav{display:none;gap:8px;align-content:start}
+.docm .ttl{font-size:18px;font-weight:600;letter-spacing:-.01em}
+.docm p{color:var(--muted);margin-top:12px}
+.docm .lines{display:grid;gap:6px;margin-top:12px}
+.callout{margin-top:12px;border-left:2px solid var(--accent);background:var(--accent-soft);border-radius:8px;padding:12px}
+.callout b{display:block;color:var(--accent);font-weight:500}.callout span{color:var(--muted)}
+@media(min-width:640px){.docm{grid-template-columns:150px 1fr;padding:20px}.docm .nav{display:grid}.docm .ttl{font-size:20px}}
+/* design mock */
+.dsg{position:relative;display:flex;align-items:center;justify-content:center;gap:20px;overflow:hidden;padding:20px;background:radial-gradient(circle,var(--border) 1px,transparent 1px) 0 0/14px 14px}
+@media(min-width:640px){.dsg{gap:32px;padding:32px}}
+.phone{position:relative;width:132px;border:1px solid var(--border-strong);border-radius:22px;background:var(--surface);padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.08);flex:none}
+.phone .rt{position:absolute;left:0;right:0;top:0;height:18px;border-radius:22px 22px 0 0;background:rgba(239,68,68,.16)}
+.phone .rl{position:absolute;top:0;bottom:0;left:0;width:18px;background:rgba(239,68,68,.16)}
+.tagr{position:absolute;border-radius:4px;padding:0 4px;font-size:8px;font-weight:600;color:#fff;background:#ef4444;line-height:1.4}
+.phone .stack{display:grid;gap:10px;position:relative}
+.gap{position:relative;margin:10px 0;height:10px}
+.gap:before{content:"";position:absolute;left:4px;right:4px;top:-9px;bottom:-9px;background:rgba(239,68,68,.16)}
+.gap .tagr{left:50%;top:50%;transform:translate(-50%,-50%)}
+.hide-s{display:none}
+@media(min-width:640px){.hide-s{display:block}}
+@media(min-width:768px){.hide-m{display:block!important}}.hide-m{display:none}
+.dsg .lab{position:absolute;right:12px;bottom:12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);padding:6px 10px;font-size:11px;font-weight:500;color:#ef4444}
+/* funnel mock */
+.fun{display:grid;gap:16px;padding:16px}
+@media(min-width:640px){.fun{grid-template-columns:1.3fr 1fr;padding:20px}}
+.fr{display:flex;align-items:center;gap:12px;margin-top:10px}.fr span{width:64px;flex:none;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fr div{flex:1;height:24px;border-radius:6px;background:var(--surface-2)}
+.fr div i{display:flex;height:100%;align-items:center;justify-content:flex-end;border-radius:6px;background:var(--accent);padding:0 8px;font:600 10px inherit;font-style:normal;color:var(--accent-fg)}
+.ret{border:1px solid var(--border);border-radius:12px;background:var(--surface);padding:12px}
+.ret b{display:block;margin-top:4px;font-size:24px;font-weight:600;letter-spacing:-.02em}
+/* connected */
+.sect{border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--surface)}
+.pad{padding:80px 0}@media(min-width:640px){.pad{padding:112px 0}}
+.conn{display:grid;gap:24px;max-width:56rem;margin:56px auto 0}
+@media(min-width:768px){.conn{grid-template-columns:1fr auto 1fr;gap:56px}}
+.side{display:grid;gap:12px;align-content:center}
+@media(min-width:768px){.side{gap:32px}}
+.chip{position:relative;display:flex;align-items:center;gap:10px;border:1px solid var(--border);border-radius:12px;background:var(--surface);padding:10px 14px;font-size:13px;font-weight:500;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.chip .ic{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;flex:none}
+.chip span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip:after{content:"";position:absolute;top:50%;width:40px;height:1px;display:none;background:linear-gradient(to right,var(--accent) 50%,transparent 50%) 0 0/8px 1px;animation:flow 1.2s linear infinite}
+@keyframes flow{to{background-position:24px 0}}
+@media(min-width:768px){.chip:after{display:block}.side.l .chip:after{right:-40px}.side.r .chip:after{left:-40px}}
+.issue{width:100%;max-width:290px;margin:0 auto;align-self:center;border:1px solid var(--accent);border-radius:16px;background:var(--bg);padding:20px;box-shadow:0 20px 60px -20px var(--accent)}
+.issue .t{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}.issue .t code{font-family:ui-monospace,Menlo,monospace}
+.issue .t span{border-radius:99px;background:var(--accent-soft);color:var(--accent);padding:2px 8px;font-weight:500}
+.issue h4{margin-top:12px;font-size:18px;font-weight:600;line-height:1.25;letter-spacing:-.01em}
+.issue .av{margin-top:16px;display:flex}.issue .av i{width:24px;height:24px;border-radius:50%;border:2px solid var(--bg);margin-left:-6px}.issue .av i:first-child{margin-left:0}
+.flowt{margin-top:64px;text-align:center}.flowt p{font-size:14px;font-weight:500;color:var(--muted)}
+.flowt ol{margin-top:20px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;font-size:12px}
+.flowt li{display:flex;gap:8px;align-items:center}.flowt li span:first-child{border:1px solid var(--border-strong);background:var(--surface-2);border-radius:99px;padding:6px 12px}.flowt li span+span{color:var(--subtle)}
+/* bento */
+.bento{display:grid;gap:16px;margin-top:56px}
+@media(min-width:640px){.bento{grid-template-columns:repeat(2,1fr)}.s2{grid-column:span 2}}
+@media(min-width:1024px){.bento{grid-template-columns:repeat(4,1fr)}.l2{grid-column:span 2}.l4{grid-column:span 4}.rs2{grid-row:span 2}}
+.tile{display:flex;flex-direction:column;border:1px solid var(--border);border-radius:24px;background:var(--surface);padding:24px;transition:border-color .15s}
+.tile:hover{border-color:var(--border-strong)}
+.vis{display:flex;align-items:center;flex:1;min-height:80px;margin-bottom:20px;border-radius:16px;background:var(--surface-2);padding:16px}.vis>*{width:100%}
+.tile h3{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600}
+.tile h3 span{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--accent-soft);color:var(--accent)}
+.tile p{margin-top:8px;font-size:14px;color:var(--muted)}
+.mini{display:grid;gap:6px;font-size:11px}
+.mini li,.mini div.r{display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:8px;background:var(--surface);padding:6px 8px}
+.mono{font-family:ui-monospace,Menlo,monospace}
+.up{color:var(--success)}.dn{color:var(--danger)}
+.bars{display:flex;align-items:flex-end;gap:6px;height:64px}.bars span{flex:1;border-radius:4px 4px 0 0;background:var(--accent)}
+.pills{display:flex;flex-wrap:wrap;gap:6px;font-size:11px}
+.pills span{display:flex;align-items:center;gap:6px;border:1px solid var(--border);background:var(--surface);color:var(--muted);border-radius:99px;padding:4px 10px}
+.pills span:first-child{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.twop{display:flex;justify-content:center;gap:16px;padding:8px 0}
 /* dev */
-.dev{display:grid;grid-template-columns:1fr 1.1fr;gap:48px;align-items:center}
-.pts{list-style:none;padding:0;margin-top:24px}.pts li{padding:8px 0 8px 30px;position:relative;color:var(--muted)}
-.pts li:before{content:"✓";position:absolute;left:0;width:20px;height:20px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-size:12px;font-weight:700;top:11px}
-pre{background:var(--code);color:#d4d4d4;border-radius:18px;padding:22px;overflow:auto;font:13px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace;box-shadow:var(--shadow)}
-pre .k{color:#569cd6}pre .s{color:#ce9178}pre .t{color:#4ec9b0}pre .c{color:#6a9955}pre .f{color:#dcdcaa}
-@media(max-width:860px){.dev{grid-template-columns:1fr}}
+.dev{display:grid;gap:48px;align-items:center}
+@media(min-width:1024px){.dev{grid-template-columns:1fr 1fr}}
+.pts{margin-top:28px;display:grid;gap:12px}.pts li{display:flex;gap:12px;font-size:15px}
+.pts li span{margin-top:2px;display:grid;place-items:center;width:20px;height:20px;flex:none;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-size:12px}
+.code{min-width:0;overflow:hidden;border:1px solid var(--border-strong);border-radius:16px;background:#1e1e1e;box-shadow:var(--shadow)}
+.code .hd{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.1)}
+.code .tb{display:flex;gap:4px}.code .tb button{border-radius:8px;padding:6px 12px;font-size:12px;font-weight:500;color:rgba(255,255,255,.55)}
+.code .tb button[aria-selected=true]{background:rgba(255,255,255,.1);color:#fff}
+.code .cp{display:flex;align-items:center;gap:6px;border-radius:8px;padding:6px 10px;font-size:12px;color:rgba(255,255,255,.6)}.code .cp:hover{background:rgba(255,255,255,.1);color:#fff}
+.code pre{overflow-x:auto;padding:16px;font:12.5px/1.5rem ui-monospace,SFMono-Regular,Menlo,monospace;color:#d4d4d4}
+.code pre[hidden]{display:none}
+.k{color:#569cd6}.s{color:#ce9178}.t2{color:#4ec9b0}.c{color:#6a9955}.f{color:#dcdcaa}.v{color:#9cdcfe}
 /* pricing */
-.toggle{display:inline-flex;margin-top:28px;padding:4px;background:var(--surface);border:1px solid var(--border);border-radius:12px}
-.toggle button{border:0;background:none;height:36px;padding:0 16px;border-radius:9px;font:600 14px inherit;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:8px}
-.toggle button[aria-checked=true]{background:var(--surface2);color:var(--fg);box-shadow:0 1px 3px rgba(0,0,0,.12)}
-.toggle em{font-style:normal;font-size:11px;background:var(--accent-soft);color:var(--accent);padding:2px 8px;border-radius:99px}
-.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:44px;text-align:left;align-items:stretch}
-.plan{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:30px;display:flex;flex-direction:column;position:relative}
-.plan.pop{border:2px solid var(--accent);box-shadow:0 24px 60px -20px var(--accent)}
-.plan .pill2{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-size:12px;font-weight:600;padding:4px 14px;border-radius:99px}
-.plan h3{font-size:20px}.plan>p{color:var(--muted);font-size:14px;margin-top:6px;min-height:44px}
-.price{display:flex;align-items:flex-end;gap:8px;margin-top:20px}
-.price b{font-size:52px;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
-.price span{color:var(--muted);font-size:14px;padding-bottom:6px}
-.bill{font-size:12px;color:var(--subtle);margin-top:4px;min-height:18px}
-.plan .btn{width:100%;margin-top:22px}
-.plan ul{list-style:none;padding:0;margin-top:22px;font-size:14px;display:grid;gap:9px;flex:1}
-.plan li{padding-left:24px;position:relative}.plan li:before{content:"✓";position:absolute;left:0;color:var(--ok);font-weight:700}
-.plan li.lead2{padding-left:0;font-weight:600}.plan li.lead2:before{content:none}
-.soon{margin-top:28px;display:inline-flex;gap:10px;align-items:center;padding:12px 18px;border-radius:14px;background:var(--surface);border:1px dashed var(--border-strong,var(--border));font-size:14px;color:var(--muted)}
-@media(max-width:900px){.plans{grid-template-columns:1fr;max-width:460px;margin-inline:auto}}
+.seg{display:inline-flex;margin-top:32px;border:1px solid var(--border);background:var(--surface);border-radius:12px;padding:4px;font-size:14px}
+.seg button{display:flex;align-items:center;gap:8px;height:36px;padding:0 16px;border-radius:8px;font-weight:500;color:var(--muted);transition:color .15s}
+.seg button:hover{color:var(--fg)}.seg button[aria-checked=true]{background:var(--surface-2);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.seg em{font-style:normal;border-radius:99px;background:var(--accent-soft);color:var(--accent);padding:2px 8px;font-size:11px;font-weight:600}
+.plans{display:grid;gap:20px;max-width:64rem;margin:56px auto 0;align-items:stretch}
+@media(min-width:1024px){.plans{grid-template-columns:repeat(3,1fr)}}
+.plan{position:relative;display:flex;flex-direction:column;border:1px solid var(--border);border-radius:24px;background:var(--surface);padding:28px}
+.plan.pop{border-color:var(--accent);box-shadow:0 24px 70px -30px var(--accent)}
+.plan .pp{position:absolute;top:-12px;left:28px;border-radius:99px;background:var(--accent);color:var(--accent-fg);padding:4px 12px;font-size:11px;font-weight:600}
+.plan h3{font-size:18px;font-weight:600}.plan .d{margin-top:4px;min-height:40px;font-size:14px;color:var(--muted)}
+.price{margin-top:24px;display:flex;align-items:flex-end;gap:8px}.price b{font-size:48px;line-height:1;font-weight:600;letter-spacing:-.03em;font-variant-numeric:tabular-nums}.price span{padding-bottom:6px;font-size:14px;color:var(--muted)}
+.bill{margin-top:4px;font-size:12px;color:var(--subtle)}
+.plan .btn{margin-top:24px;width:100%;height:44px;font-size:14px}
+.plan .btn.line{border:1px solid var(--border-strong)}.plan .btn.line:hover{background:var(--surface-2)}
+.plan ul{margin-top:28px;display:grid;gap:12px;font-size:14px}
+.plan li{display:flex;gap:10px}.plan li .i{margin-top:3px;color:var(--accent);font-size:16px}.plan li span{color:var(--muted)}.plan li.lead{font-weight:500}
 /* faq */
-.faq{max-width:760px;margin:44px auto 0;text-align:left}
-details{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:0 20px;margin-bottom:10px}
-summary{cursor:pointer;padding:18px 0;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:12px}
-summary::-webkit-details-marker{display:none}summary:after{content:"+";color:var(--accent);font-size:20px;line-height:1}
-details[open] summary:after{content:"–"}
-details p{color:var(--muted);padding-bottom:18px;font-size:15px}
-/* final cta */
-.final{margin:0 20px;border-radius:32px;background:linear-gradient(120deg,#143a86,#0b7bbd 55%,#6a5ae0);color:#fff;text-align:center;padding:72px 24px}
-.final h2{max-width:720px;margin-inline:auto}.final p{opacity:.85;margin-top:14px}
-.final .btn{background:#fff;color:#0f1b2d;margin-top:28px}
-footer{padding:48px 0;text-align:center;color:var(--subtle);font-size:14px}
+.faq{max-width:48rem;margin:0 auto;padding:0 20px 80px}
+@media(min-width:640px){.faq{padding-bottom:112px}}
+.faqbox{margin-top:40px;overflow:hidden;border:1px solid var(--border);border-radius:24px;background:var(--surface)}
+.faqbox>div+div{border-top:1px solid var(--border)}
+.faqbox button{display:flex;width:100%;align-items:center;justify-content:space-between;gap:16px;padding:20px 24px;text-align:left;font-size:15px;font-weight:500}
+.faqbox button:hover{background:var(--surface-2)}
+.faqbox button .i{color:var(--muted);transition:transform .2s}.faqbox button[aria-expanded=true] .i{transform:rotate(180deg)}
+.faqbox .a{padding:0 24px 24px;font-size:14px;color:var(--muted)}.faqbox .a[hidden]{display:none}
+/* final */
+.final{position:relative;max-width:64rem;margin:0 auto;overflow:hidden;border-radius:2rem;padding:64px 24px;text-align:center;color:#fff;background:linear-gradient(120deg,var(--header-a),var(--header-b))}
+.final .lp-grid{opacity:.3;-webkit-mask-image:none;mask-image:none}
+.final h2{position:relative;max-width:42rem;margin:0 auto}.final p{position:relative;margin-top:16px;color:rgba(255,255,255,.8)}
+.final .btn{position:relative;margin-top:36px;background:#fff;color:#06306b}.final .btn:hover{opacity:.9}
+footer{border-top:1px solid var(--border)}
+footer .row{display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:16px;padding:32px 20px;font-size:12px;color:var(--subtle);text-align:center}
+@media(min-width:640px){footer .row{flex-direction:row}}
+/* toast */
+#toast{position:fixed;right:20px;bottom:20px;z-index:100;max-width:340px;border:1px solid var(--border-strong);border-radius:14px;background:var(--surface);padding:14px 16px;box-shadow:var(--shadow);transform:translateY(20px);opacity:0;pointer-events:none;transition:.25s}
+#toast.show{transform:none;opacity:1}#toast b{display:block;font-size:14px}#toast span{font-size:13px;color:var(--muted)}
 </style>
 </head>
 <body>
 
-<nav><div class="pill">
-  <a href="#top" class="logo"><i></i>Nexora</a>
-  <div class="links">
-    <a href="#modules"><span data-fr>Produit</span><span data-en>Product</span></a>
-    <a href="#relie"><span data-fr>Tout est relié</span><span data-en>How it connects</span></a>
-    <a href="#dev"><span data-fr>Développeurs</span><span data-en>Developers</span></a>
-    <a href="#abonnements"><span data-fr>Abonnements</span><span data-en>Pricing</span></a>
-    <a href="#faq">FAQ</a>
-  </div>
-  <div class="tools">
-    <button class="ibtn" id="lang" aria-label="Langue / Language">EN</button>
-    <button class="ibtn" id="theme" aria-label="Thème / Theme">◐</button>
-    <a class="btn primary sm" href="#abonnements"><span data-fr>Commencer</span><span data-en>Start free</span></a>
-  </div>
-</div></nav>
+<!-- Icons (lucide, same set as the app) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+<symbol id="check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+<symbol id="chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id="copy" viewBox="0 0 24 24"><rect x="8" y="8" width="14" height="14" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+<symbol id="file" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4M10 9H8M16 13H8M16 17H8"/></symbol>
+<symbol id="branch" viewBox="0 0 24 24"><path d="M6 3v12"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></symbol>
+<symbol id="pr" viewBox="0 0 24 24"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7M6 9v12"/></symbol>
+<symbol id="merge" viewBox="0 0 24 24"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></symbol>
+<symbol id="kanban" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 7v7M12 7v4M16 7v9"/></symbol>
+<symbol id="menu" viewBox="0 0 24 24"><path d="M4 12h16M4 6h16M4 18h16"/></symbol>
+<symbol id="x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+<symbol id="mega" viewBox="0 0 24 24"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></symbol>
+<symbol id="pen" viewBox="0 0 24 24"><path d="m12 19 7-7 3 3-7 7-3-3z"/><path d="m18 13-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="m2 2 7.586 7.586"/><circle cx="11" cy="11" r="2"/></symbol>
+<symbol id="shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+<symbol id="chart" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16M18 17V9M13 17V5M8 17v-3"/></symbol>
+<symbol id="spark" viewBox="0 0 24 24"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"/></symbol>
+<symbol id="bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+<symbol id="lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+<symbol id="search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+</defs></svg>
 
-<header class="hero" id="top"><div class="wrap">
-  <span class="badge"><span data-fr>Gratuit pendant la bêta · toutes les fonctions incluses</span><span data-en>Free during the beta · every feature included</span></span>
-  <h1><span data-fr>Un seul workspace.<br><span class="grad">Tout votre produit.</span></span><span data-en>One workspace.<br><span class="grad">Your whole product.</span></span></h1>
-  <p class="sub"><span data-fr>Planifiez vos sprints, confiez des tâches, rédigez vos specs, dessinez vos écrans, suivez votre code et mesurez l'usage réel — au même endroit, où chaque ticket connaît son design, son doc et sa pull request.</span><span data-en>Plan sprints, assign tasks, write specs, design screens, follow your code and measure real usage — in one place where every ticket knows its design, its doc and its pull request.</span></p>
-  <div class="cta">
-    <a class="btn primary" href="#abonnements"><span data-fr>Commencer gratuitement</span><span data-en>Start for free</span></a>
-    <a class="btn" href="#relie"><span data-fr>Voir comment tout se relie</span><span data-en>See how it connects</span></a>
+<header class="top">
+  <div class="navbox">
+    <div class="navrow">
+      <a href="#" class="logo" aria-label="Nexora"><b>N</b> Nexora</a>
+      <nav class="navlinks" aria-label="Primary">
+        <a href="#product" data-t="nav.product"></a><a href="#connected" data-t="nav.connected"></a><a href="#developers" data-t="nav.dev"></a><a href="#pricing" data-t="nav.pricing"></a><a href="#faq" data-t="nav.faq"></a>
+      </nav>
+      <div class="navright">
+        <span class="hide-sm"><button class="sq lang" aria-label="Langue / Language"></button><button class="sq theme" aria-label="Thème / Theme">◐</button></span>
+        <a class="signin go" href="#" data-t="nav.signin"></a>
+        <a class="start go" href="#" data-t="nav.start"></a>
+        <button class="sq burger" id="burger" aria-expanded="false" aria-label="Menu"><svg class="i"><use href="#menu"/></svg></button>
+      </div>
+    </div>
+    <nav class="mnav" id="mnav" aria-label="Mobile">
+      <a href="#product" data-t="nav.product"></a><a href="#connected" data-t="nav.connected"></a><a href="#developers" data-t="nav.dev"></a><a href="#pricing" data-t="nav.pricing"></a><a href="#faq" data-t="nav.faq"></a>
+      <a class="go" href="#" data-t="nav.signin"></a>
+      <div style="display:flex;gap:8px;padding:8px 12px 0"><button class="sq lang"></button><button class="sq theme">◐</button></div>
+    </nav>
   </div>
-  <p class="note"><span data-fr>Sans carte bancaire · Connexion par code, sans mot de passe</span><span data-en>No credit card · Sign in with a code, no password</span></p>
+</header>
 
-  <div class="mock" aria-hidden="true">
-    <div class="mock-bar"><b></b><b></b><b></b><span></span></div>
-    <div class="mock-body">
-      <div class="side"><div class="on">Vue d'ensemble</div><div>Projets</div><div>Tâches</div><div>Documents</div><div>Maquettes</div><div>Analytics</div><div>ASO</div><div>Marketing</div><div>Activité</div></div>
-      <div class="main">
-        <div class="kpis">
-          <div class="kpi"><small>Sprint 24</small><strong>68%</strong><em>▲ dans les temps</em></div>
-          <div class="kpi"><small>Tickets ouverts</small><strong>42</strong><em>3 bloqués</em></div>
-          <div class="kpi"><small>PR à relire</small><strong>7</strong><em>2 urgentes</em></div>
-          <div class="kpi"><small>Utilisateurs actifs</small><strong>1 284</strong><em>▲ 12%</em></div>
-        </div>
-        <div class="board">
-          <div class="col"><h6>À faire</h6><div class="card">Écran de paiement<br><i>DES-14</i></div><div class="card">Notifications push<br><i>APP-31</i></div></div>
-          <div class="col"><h6>En cours</h6><div class="card">Sign in with Apple<br><i>AUTH-08</i></div></div>
-          <div class="col"><h6>Terminé</h6><div class="card">Onboarding v2<br><i>APP-27</i></div><div class="card">Export CSV<br><i>APP-22</i></div></div>
-        </div>
+<main>
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="lp-grid" aria-hidden="true"></div>
+  <div class="blob" style="left:-96px;top:40px;opacity:.4;background:var(--header-b)" aria-hidden="true"></div>
+  <div class="blob" style="right:-96px;top:160px;opacity:.3;background:#8b7cf6" aria-hidden="true"></div>
+  <div class="in-wrap">
+    <span class="badge"><span class="dot"></span><span data-t="badge"></span></span>
+    <h1><span data-t="hero1"></span><br><span class="gt" data-t="hero2"></span></h1>
+    <p class="sub" data-t="heroSub"></p>
+    <div class="ctas">
+      <a class="btn primary go" href="#"><span data-t="heroCta"></span><svg class="i"><use href="#arrow-right"/></svg></a>
+      <a class="btn ghost" href="#connected" data-t="heroCta2"></a>
+    </div>
+    <p class="note" data-t="heroNote"></p>
+    <div class="repl"><span data-t="replaces"></span><span>Jira</span><span>Notion</span><span>Figma</span><span>PostHog</span><span>Linear</span></div>
+
+    <div class="show" id="show">
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" aria-selected="true"><svg class="i"><use href="#kanban"/></svg><span data-t="tab.projects"></span><i class="bar"></i></button>
+        <button class="tab" role="tab" aria-selected="false"><svg class="i"><use href="#file"/></svg><span data-t="tab.docs"></span><i class="bar"></i></button>
+        <button class="tab" role="tab" aria-selected="false"><svg class="i"><use href="#pen"/></svg><span data-t="tab.design"></span><i class="bar"></i></button>
+        <button class="tab" role="tab" aria-selected="false"><svg class="i"><use href="#chart"/></svg><span data-t="tab.analytics"></span><i class="bar"></i></button>
+      </div>
+      <p class="tabdesc" id="tabdesc"></p>
+      <div class="stage" aria-hidden="true">
+        <!-- Projects -->
+        <div class="panel on"><div class="win"><div class="wbar"><span class="l"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></span><span class="url"><svg class="i" style="font-size:9px"><use href="#search"/></svg>nexora.app/projects</span><span class="sp"></span></div>
+          <div class="board">
+            <div class="col"><h6><i style="background:var(--subtle)"></i><span data-t="mock.todo"></span></h6>
+              <div class="kc"><div data-t="mock.c1"></div><div class="m"><code>NX-140</code><i style="background:var(--accent-soft)"></i></div></div>
+              <div class="kc"><div data-t="mock.c2"></div><div class="m"><code>NX-141</code><i style="background:var(--accent-soft)"></i></div></div></div>
+            <div class="col"><h6><i style="background:var(--warning)"></i><span data-t="mock.doing"></span></h6>
+              <div class="kc"><div data-t="mock.c3"></div><div class="m"><code>NX-144</code><i style="background:color-mix(in oklab,var(--warning) 25%,transparent)"></i></div></div>
+              <div class="kc"><div data-t="mock.c4"></div><div class="m"><code>NX-145</code><i style="background:color-mix(in oklab,var(--warning) 25%,transparent)"></i></div></div></div>
+            <div class="col"><h6><i style="background:var(--success)"></i><span data-t="mock.done"></span></h6>
+              <div class="kc"><div data-t="mock.c5"></div><div class="m"><code>NX-148</code><i style="background:color-mix(in oklab,var(--success) 25%,transparent)"></i></div></div>
+              <div class="kc"><div data-t="mock.c6"></div><div class="m"><code>NX-149</code><i style="background:color-mix(in oklab,var(--success) 25%,transparent)"></i></div></div></div>
+          </div></div></div>
+        <!-- Docs -->
+        <div class="panel"><div class="win"><div class="wbar"><span class="l"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></span><span class="url"><svg class="i" style="font-size:9px"><use href="#search"/></svg>nexora.app/documents</span><span class="sp"></span></div>
+          <div class="docm">
+            <div class="nav"><div class="bar2" style="width:80%"></div><div class="bar2" style="width:60%"></div><div class="bar2" style="width:70%;background:var(--accent-soft)"></div><div class="bar2" style="width:50%"></div><div class="bar2" style="width:65%"></div></div>
+            <div><div class="ttl" data-t="mock.doc1"></div><p data-t="mock.doc2"></p>
+              <div class="lines"><div class="bar2" style="width:92%"></div><div class="bar2" style="width:84%"></div><div class="bar2" style="width:70%"></div></div>
+              <div class="callout"><b data-t="mock.doc3"></b><span data-t="mock.doc4"></span></div></div>
+          </div></div></div>
+        <!-- Design -->
+        <div class="panel"><div class="win"><div class="wbar"><span class="l"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></span><span class="url"><svg class="i" style="font-size:9px"><use href="#search"/></svg>nexora.app/designs</span><span class="sp"></span></div>
+          <div class="dsg">
+            <div class="phone hide-s" data-phone></div><div class="phone" data-phone></div>
+            <div class="phone hide-m" style="display:none;padding:16px"><div class="bar2" style="width:48px;height:12px;background:var(--fg);opacity:.8;border-radius:4px"></div>
+              <div style="display:grid;gap:8px;margin-top:8px"><div style="display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:8px;padding:8px"><i style="width:20px;height:20px;border-radius:50%;background:var(--accent-soft)"></i><span class="bar2" style="flex:1"></span></div><div style="display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:8px;padding:8px"><i style="width:20px;height:20px;border-radius:50%;background:var(--accent-soft)"></i><span class="bar2" style="flex:1"></span></div><div style="display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:8px;padding:8px"><i style="width:20px;height:20px;border-radius:50%;background:var(--accent-soft)"></i><span class="bar2" style="flex:1"></span></div><div style="height:32px;border-radius:8px;background:var(--surface-3)"></div></div></div>
+            <span class="lab">padding · gap</span>
+          </div></div></div>
+        <!-- Analytics -->
+        <div class="panel"><div class="win"><div class="wbar"><span class="l"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></span><span class="url"><svg class="i" style="font-size:9px"><use href="#search"/></svg>nexora.app/analytics</span><span class="sp"></span></div>
+          <div class="fun">
+            <div><div style="font-weight:500" data-t="mock.funnel"></div>
+              <div class="fr"><span data-t="mock.f1"></span><div><i style="width:100%">100%</i></div></div>
+              <div class="fr"><span data-t="mock.f2"></span><div><i style="width:62%;opacity:.82">62%</i></div></div>
+              <div class="fr"><span data-t="mock.f3"></span><div><i style="width:41%;opacity:.64">41%</i></div></div>
+              <div class="fr"><span data-t="mock.f4"></span><div><i style="width:18%;opacity:.46">18%</i></div></div></div>
+            <div class="ret"><div style="color:var(--muted)" data-t="mock.ret"></div><b>34%</b>
+              <svg viewBox="0 0 120 40" preserveAspectRatio="none" style="margin-top:8px;height:48px;width:100%"><polyline points="0,32 20,26 40,28 60,18 80,20 100,10 120,6 120,40 0,40" fill="var(--accent-soft)"/><polyline points="0,32 20,26 40,28 60,18 80,20 100,10 120,6" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg></div>
+          </div></div></div>
       </div>
     </div>
   </div>
-</div></header>
+</section>
 
-<section id="relie"><div class="wrap center">
-  <div class="eyebrow"><span data-fr>Le principe</span><span data-en>The idea</span></div>
-  <h2><span data-fr>Planifier · Documenter · Designer · Construire · Mesurer</span><span data-en>Plan · Document · Design · Build · Measure</span></h2>
-  <p class="lead"><span data-fr>Un ticket n'est pas une île. Ouvrez-en un et vous arrivez sur la pull request qui le livre, le design qu'il implémente, le doc qui l'explique et les événements qui prouvent qu'il marche.</span><span data-en>A ticket is not an island. Open one and you land on the pull request that ships it, the design it implements, the doc that explains it and the events that prove it works.</span></p>
-  <div class="flow">
-    <div class="step"><i>🗂</i><b><span data-fr>Planifier</span><span data-en>Plan</span></b><span><span data-fr>Projets, sprints, roadmap</span><span data-en>Projects, sprints, roadmap</span></span></div>
-    <div class="step"><i>📝</i><b><span data-fr>Documenter</span><span data-en>Document</span></b><span><span data-fr>Specs et guides vivants</span><span data-en>Living specs and guides</span></span></div>
-    <div class="step"><i>🎨</i><b>Design</b><span><span data-fr>Écrans, prototypes, export</span><span data-en>Screens, prototypes, export</span></span></div>
-    <div class="step"><i>⚙️</i><b><span data-fr>Construire</span><span data-en>Build</span></b><span><span data-fr>GitHub relié aux tickets</span><span data-en>GitHub tied to tickets</span></span></div>
-    <div class="step"><i>📈</i><b><span data-fr>Mesurer</span><span data-en>Measure</span></b><span><span data-fr>Analytics, ASO, marketing</span><span data-en>Analytics, ASO, marketing</span></span></div>
+<!-- ============ BENTO ============ -->
+<section id="product" class="max pad">
+  <div class="head rv"><span class="eyebrow"><svg class="i" style="font-size:11px;margin-right:4px"><use href="#spark"/></svg><span data-t="nav.product"></span></span><h2 data-t="bento.title"></h2><p data-t="bento.sub"></p></div>
+  <div class="bento">
+    <article class="tile l2 rv"><div class="vis"><svg viewBox="0 0 160 64" style="height:64px;width:100%"><path d="M0 8 L160 56" stroke="var(--border-strong)" stroke-dasharray="3 3" fill="none"/><polyline points="0,8 24,14 48,24 72,26 96,36 120,42 144,52" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="144" cy="52" r="3" fill="var(--accent)"/></svg></div>
+      <h3><span><svg class="i"><use href="#kanban"/></svg></span><b data-t="b.pm"></b></h3><p data-t="b.pmD"></p></article>
+    <article class="tile rv"><div class="vis"><div style="display:grid;gap:6px"><div style="height:12px;width:96px;border-radius:4px;background:var(--fg);opacity:.7"></div><div class="bar2" style="width:100%"></div><div class="bar2" style="width:86%"></div><div style="border-left:2px solid var(--accent);background:var(--accent-soft);border-radius:4px;padding:4px 8px"><div class="bar2" style="width:60%;background:color-mix(in oklab,var(--accent) 30%,transparent)"></div></div></div></div>
+      <h3><span><svg class="i"><use href="#file"/></svg></span><b data-t="b.docs"></b></h3><p data-t="b.docsD"></p></article>
+    <article class="tile rv"><div class="vis"><ul class="mini">
+      <li><svg class="i" style="color:var(--muted)"><use href="#merge"/></svg><span class="mono">#88</span><i style="margin-left:auto;width:8px;height:8px;border-radius:50%;background:var(--success)"></i></li>
+      <li><svg class="i" style="color:var(--muted)"><use href="#merge"/></svg><span class="mono">#87</span><i style="margin-left:auto;width:8px;height:8px;border-radius:50%;background:var(--accent)"></i></li>
+      <li><svg class="i" style="color:var(--muted)"><use href="#merge"/></svg><span class="mono">#85</span><i style="margin-left:auto;width:8px;height:8px;border-radius:50%;background:var(--warning)"></i></li></ul></div>
+      <h3><span><svg class="i"><use href="#branch"/></svg></span><b>GitHub</b></h3><p data-t="b.ghD"></p></article>
+    <article class="tile s2 rs2 rv"><div class="vis"><div class="twop"><div class="phone" data-phone></div><div class="phone hide-s" data-phone></div></div></div>
+      <h3><span><svg class="i"><use href="#pen"/></svg></span><b>Design</b></h3><p data-t="b.designD"></p></article>
+    <article class="tile rv"><div class="vis"><div class="bars"><span style="height:30%;opacity:.4"></span><span style="height:46%;opacity:.475"></span><span style="height:38%;opacity:.55"></span><span style="height:62%;opacity:.625"></span><span style="height:54%;opacity:.7"></span><span style="height:78%;opacity:.775"></span><span style="height:70%;opacity:.85"></span><span style="height:92%;opacity:.925"></span></div></div>
+      <h3><span><svg class="i"><use href="#chart"/></svg></span><b>Analytics</b></h3><p data-t="b.analyticsD"></p></article>
+    <article class="tile rv"><div class="vis"><div class="mini"><div class="r"><i style="width:6px;height:6px;border-radius:50%;background:var(--accent)"></i>@maya mentioned you</div><div class="r" style="margin-left:14px"><i style="width:6px;height:6px;border-radius:50%;background:var(--accent)"></i>NX-142 is due tomorrow</div></div></div>
+      <h3><span><svg class="i"><use href="#bell"/></svg></span><b>Notifications</b></h3><p data-t="b.notifD"></p></article>
+    <article class="tile s2 rv"><div class="vis"><ul class="mini">
+      <li><span>habit tracker</span><span class="mono" style="margin-left:auto">#4</span><span class="up" style="width:32px;text-align:right">▲ 3</span></li>
+      <li><span>focus timer</span><span class="mono" style="margin-left:auto">#11</span><span class="up" style="width:32px;text-align:right">▲ 1</span></li>
+      <li><span>daily planner</span><span class="mono" style="margin-left:auto">#27</span><span class="dn" style="width:32px;text-align:right">▼ 2</span></li></ul></div>
+      <h3><span><svg class="i"><use href="#mega"/></svg></span><b data-t="b.growth"></b></h3><p data-t="b.growthD"></p></article>
+    <article class="tile s2 l4 rv"><div class="vis"><div class="pills"><span><svg class="i" style="font-size:10px"><use href="#check"/></svg>Main Workspace</span><span><svg class="i" style="font-size:10px"><use href="#check"/></svg>Side project</span><span><svg class="i" style="font-size:10px"><use href="#lock"/></svg>Client work</span></div></div>
+      <h3><span><svg class="i"><use href="#shield"/></svg></span><b>Workspaces</b></h3><p data-t="b.wsD"></p></article>
   </div>
-  <div class="chain">
-    <div class="main-ticket"><small>Ticket</small><span data-fr>Ajouter Sign in with Apple</span><span data-en>Add Sign in with Apple</span></div>
-    <div><small>Sprint</small>Sprint 24</div>
-    <div><small>GitHub</small><span data-fr>Pull request #88 · fusionnée</span><span data-en>Pull request #88 · merged</span></div>
-    <div><small>Design</small><span data-fr>Écran de connexion</span><span data-en>Sign-in screen</span></div>
-    <div><small>Doc</small><span data-fr>Spécification d'authentification</span><span data-en>Authentication spec</span></div>
-    <div><small><span data-fr>Événement</span><span data-en>Event</span></small>signup_completed</div>
-  </div>
-</div></section>
+</section>
 
-<section id="modules" style="padding-top:0"><div class="wrap">
-  <div class="center">
-    <div class="eyebrow"><span data-fr>Tout ce que fait Nexora</span><span data-en>Everything Nexora does</span></div>
-    <h2><span data-fr>Des modules. Un seul modèle de données.</span><span data-en>Modules. One data model.</span></h2>
-    <p class="lead"><span data-fr>Rien à assembler : chaque module lit et écrit les mêmes projets, personnes et échéances.</span><span data-en>Nothing to glue together: every module reads and writes the same projects, people and deadlines.</span></p>
-  </div>
-  <div class="grid">
-    <article class="feat"><div class="ic">🏠</div><h3><span data-fr>Vue d'ensemble</span><span data-en>Overview</span></h3>
-      <p><span data-fr>Un centre de commande : calendrier, KPIs, focus du jour, échéances et blocages.</span><span data-en>A command centre: calendar, KPIs, daily focus, deadlines and blockers.</span></p>
-      <ul><li><span data-fr>Checklist « Premiers pas »</span><span data-en>"Getting started" checklist</span></li><li><span data-fr>À faire aujourd'hui</span><span data-en>Today's to-dos</span></li></ul></article>
-
-    <article class="feat"><div class="ic">🗂</div><h3><span data-fr>Projets & sprints</span><span data-en>Projects & sprints</span></h3>
-      <p><span data-fr>Tickets, boards, sprints, roadmap et jalons, avec blocages et échéances en vue.</span><span data-en>Issues, boards, sprints, roadmap and milestones, with blockers and deadlines in view.</span></p>
-      <ul><li><span data-fr>Clés de projet (APP-12…)</span><span data-en>Project keys (APP-12…)</span></li><li><span data-fr>Liens vers docs, designs et PR</span><span data-en>Links to docs, designs and PRs</span></li></ul></article>
-
-    <article class="feat"><div class="ic">✅</div><h3><span data-fr>Tâches</span><span data-en>Tasks</span></h3>
-      <p><span data-fr>Les consignes et petits travaux hors projet, assignés à un membre, avec échéance et rappels.</span><span data-en>Instructions and small jobs outside any project, assigned to a member, with due dates and reminders.</span></p>
-      <ul><li><span data-fr>Vue « Mon travail » ou équipe</span><span data-en>"My work" or whole-team view</span></li><li><span data-fr>Vue par responsable pour les leads</span><span data-en>Grouped by assignee for leads</span></li></ul></article>
-
-    <article class="feat"><div class="ic">📝</div><h3>Documents</h3>
-      <p><span data-fr>Un éditeur riche avec modèles, tableaux, encadrés, mentions et liens vivants vers les tickets.</span><span data-en>A rich editor with templates, tables, callouts, mentions and live links to tickets.</span></p>
-      <ul><li><span data-fr>Historique de versions et commentaires</span><span data-en>Version history and comments</span></li><li><span data-fr>Guides intégrés pour chaque module</span><span data-en>Built-in guides for every module</span></li></ul></article>
-
-    <article class="feat"><div class="ic">🎨</div><h3>Design</h3>
-      <p><span data-fr>Un éditeur de wireframes : auto-layout, composants à variantes, prototypes et export vers CSS, React, React Native et SwiftUI.</span><span data-en>A wireframe editor: auto-layout, components with variants, prototypes and export to CSS, React, React Native and SwiftUI.</span></p>
-      <ul><li><span data-fr>Maquettes : un design system par projet</span><span data-en>Mockups: one design system per project</span></li><li><span data-fr>Surcouche d'espacements (padding, gap, margin)</span><span data-en>Spacing overlay (padding, gap, margin)</span></li></ul></article>
-
-    <article class="feat"><div class="ic">🐙</div><h3>GitHub</h3>
-      <p><span data-fr>Commits, pull requests et déploiements rattachés aux tickets qu'ils livrent.</span><span data-en>Commits, pull requests and deployments attached to the tickets they ship.</span></p>
-      <ul><li><span data-fr>Webhook dédié par projet</span><span data-en>Dedicated webhook per project</span></li><li><span data-fr>Signature HMAC vérifiée</span><span data-en>HMAC signature verified</span></li></ul></article>
-
-    <article class="feat"><div class="ic">📈</div><h3>Analytics</h3>
-      <p><span data-fr>Événements, funnels et rétention, en tableaux de bord de graphiques que vous composez.</span><span data-en>Events, funnels and retention, as dashboards of charts you compose.</span></p>
-      <ul><li><span data-fr>Plan de tracking et utilisateurs</span><span data-en>Tracking plan and users</span></li><li><span data-fr>Flux live, clés test / production</span><span data-en>Live feed, test / live keys</span></li></ul></article>
-
-    <article class="feat"><div class="ic">🔎</div><h3>ASO</h3>
-      <p><span data-fr>Suivez vos mots-clés App Store, vos concurrents, notes et avis, branchés sur les endpoints publics d'Apple.</span><span data-en>Track your App Store keywords, competitors, ratings and reviews, wired to Apple's public endpoints.</span></p>
-      <ul><li><span data-fr>Positions estimées, historique</span><span data-en>Estimated ranks, history</span></li><li><span data-fr>Popularité et difficulté calculées</span><span data-en>Calculated popularity and difficulty</span></li></ul><span class="tag">iOS</span></article>
-
-    <article class="feat"><div class="ic">📣</div><h3>Marketing</h3>
-      <p><span data-fr>Campagnes, parcours, 5 modèles d'attribution, audiences et alertes à côté de vos données produit.</span><span data-en>Campaigns, journeys, 5 attribution models, audiences and alerts next to your product data.</span></p>
-      <ul><li><span data-fr>Entonnoir visiteurs → inscrits → revenu</span><span data-en>Visitors → signups → revenue funnel</span></li><li><span data-fr>Page dédiée par campagne</span><span data-en>Dedicated page per campaign</span></li></ul></article>
-
-    <article class="feat"><div class="ic">🕘</div><h3><span data-fr>Activité</span><span data-en>Activity</span></h3>
-      <p><span data-fr>Un fil unique : historique des tickets, événements GitHub et documents.</span><span data-en>A single feed: ticket history, GitHub events and documents.</span></p></article>
-
-    <article class="feat"><div class="ic">🔔</div><h3>Notifications</h3>
-      <p><span data-fr>Mentions, revues et rappels d'échéances, avec heures calmes et résumé.</span><span data-en>Mentions, reviews and deadline reminders, with quiet hours and digest.</span></p></article>
-
-    <article class="feat"><div class="ic">🔐</div><h3>Workspaces</h3>
-      <p><span data-fr>Workspaces publics ou privés (mot de passe), connexion par code ou lien magique, français / anglais, clair / sombre.</span><span data-en>Public or private (password) workspaces, sign-in by code or magic link, French / English, light / dark.</span></p></article>
-  </div>
-</div></section>
-
-<section id="dev" style="background:var(--surface2)"><div class="wrap dev">
-  <div>
-    <div class="eyebrow"><span data-fr>Développeurs</span><span data-en>Developers</span></div>
-    <h2><span data-fr>Pensé pour ceux qui livrent</span><span data-en>Built for people who ship</span></h2>
-    <p class="lead" style="margin-left:0"><span data-fr>Ajoutez l'analytics à votre app en quelques lignes, avec des clés qui restent dans votre configuration de build.</span><span data-en>Add analytics to your app in a few lines, with keys that stay in your build configuration.</span></p>
-    <ul class="pts">
-      <li><span data-fr>SDK typés pour Swift et React Native</span><span data-en>Typed SDKs for Swift and React Native</span></li>
-      <li><span data-fr>Clés de test et de production séparées pour chaque projet</span><span data-en>Separate test and live keys for every project</span></li>
-      <li><span data-fr>Les clés vivent dans xcconfig ou .env, jamais dans le code source</span><span data-en>Keys live in xcconfig or .env, never in source code</span></li>
-      <li><span data-fr>Événements d'installation, de session et d'achat inclus</span><span data-en>Install, session and purchase events out of the box</span></li>
-    </ul>
-  </div>
-<pre><code><span class="c">// Les clés viennent de Info.plist / xcconfig</span>
-<span class="k">let</span> key = Bundle.main.object(
-  forInfoDictionaryKey: <span class="s">"NEXORA_KEY"</span>) <span class="k">as</span>? <span class="t">String</span> ?? <span class="s">""</span>
-
-<span class="t">NexoraAnalytics</span>.<span class="f">configure</span>(apiKey: key)
-
-<span class="t">NexoraAnalytics</span>.<span class="f">track</span>(<span class="s">"signup_completed"</span>, [
-  <span class="s">"method"</span>: <span class="s">"apple"</span>
-])</code></pre>
-</div></section>
-
-<section id="abonnements"><div class="wrap center">
-  <div class="eyebrow"><span data-fr>Abonnements</span><span data-en>Pricing</span></div>
-  <h2><span data-fr>Une tarification simple qui grandit avec l'équipe</span><span data-en>Simple pricing that grows with your team</span></h2>
-  <p class="lead"><span data-fr>Commencez gratuitement. Passez au payant quand l'équipe grandit.</span><span data-en>Start free. Upgrade when the team does.</span></p>
-
-  <div class="toggle" role="radiogroup" aria-label="Période de facturation">
-    <button role="radio" aria-checked="false" data-period="m"><span data-fr>Mensuel</span><span data-en>Monthly</span></button>
-    <button role="radio" aria-checked="true" data-period="y"><span data-fr>Annuel</span><span data-en>Yearly</span><em><span data-fr>2 mois offerts</span><span data-en>2 months free</span></em></button>
-  </div>
-
-  <div class="plans">
-    <div class="plan">
-      <h3><span data-fr>Gratuit</span><span data-en>Free</span></h3>
-      <p><span data-fr>Pour les projets perso et les petites équipes qui démarrent.</span><span data-en>For side projects and small teams getting started.</span></p>
-      <div class="price"><b>0 €</b></div>
-      <div class="bill"><span data-fr>gratuit pour toujours</span><span data-en>free forever</span></div>
-      <a class="btn" href="#top"><span data-fr>Commencer gratuitement</span><span data-en>Start for free</span></a>
-      <ul>
-        <li><span data-fr>Jusqu'à 3 membres</span><span data-en>Up to 3 members</span></li>
-        <li><span data-fr>2 projets</span><span data-en>2 projects</span></li>
-        <li><span data-fr>Tickets, sprints et roadmap</span><span data-en>Issues, sprints and roadmap</span></li>
-        <li><span data-fr>Documents et 3 fichiers de design</span><span data-en>Documents and 3 design files</span></li>
-        <li><span data-fr>Support communautaire</span><span data-en>Community support</span></li>
-      </ul>
+<!-- ============ CONNECTED ============ -->
+<section id="connected" class="sect">
+  <div class="max pad">
+    <div class="head rv"><span class="eyebrow" data-t="nav.connected"></span><h2 data-t="conn.title"></h2><p data-t="conn.sub"></p></div>
+    <div class="conn">
+      <div class="side l">
+        <div class="chip rv"><span class="ic" style="background:color-mix(in oklab,var(--success) 15%,transparent);color:var(--success)"><svg class="i"><use href="#pr"/></svg></span><span data-t="conn.pr"></span></div>
+        <div class="chip rv"><span class="ic" style="background:color-mix(in oklab,var(--warning) 15%,transparent);color:var(--warning)"><svg class="i"><use href="#kanban"/></svg></span><span data-t="conn.sprint"></span></div>
+      </div>
+      <div class="issue rv"><div class="t"><code>NX-142</code><span>In review</span></div><h4 data-t="conn.issue"></h4><div class="av"><i style="background:var(--accent)"></i><i style="background:var(--success)"></i><i style="background:var(--warning)"></i></div></div>
+      <div class="side r">
+        <div class="chip rv"><span class="ic" style="background:var(--accent-soft);color:var(--accent)"><svg class="i"><use href="#pen"/></svg></span><span data-t="conn.design"></span></div>
+        <div class="chip rv"><span class="ic" style="background:var(--surface-3)"><svg class="i"><use href="#file"/></svg></span><span data-t="conn.doc"></span></div>
+        <div class="chip rv"><span class="ic" style="background:color-mix(in oklab,#8b7cf6 20%,transparent);color:#8b7cf6"><svg class="i"><use href="#chart"/></svg></span><span data-t="conn.event"></span></div>
+      </div>
     </div>
+    <div class="flowt rv"><p data-t="flowTitle"></p><ol id="flow"></ol></div>
+  </div>
+</section>
 
-    <div class="plan pop">
-      <span class="pill2"><span data-fr>Le plus choisi</span><span data-en>Most popular</span></span>
-      <h3>Pro</h3>
-      <p><span data-fr>Pour les équipes produit qui livrent chaque semaine.</span><span data-en>For product teams that ship every week.</span></p>
-      <div class="price"><b data-price="12|10">10 €</b><span><span data-fr>par utilisateur / mois</span><span data-en>per user / month</span></span></div>
-      <div class="bill" data-bill><span data-fr>facturé annuellement</span><span data-en>billed yearly</span></div>
-      <a class="btn primary" href="#" data-plan="Pro"><span data-fr>Choisir Pro</span><span data-en>Choose Pro</span></a>
-      <ul>
-        <li class="lead2"><span data-fr>Tout le plan Gratuit, plus :</span><span data-en>Everything in Free, plus:</span></li>
-        <li><span data-fr>Membres, projets et designs illimités</span><span data-en>Unlimited members, projects and designs</span></li>
-        <li><span data-fr>Intégration GitHub</span><span data-en>GitHub integration</span></li>
-        <li><span data-fr>Analytics produit</span><span data-en>Product analytics</span></li>
-        <li><span data-fr>Workspaces privés</span><span data-en>Private workspaces</span></li>
-        <li><span data-fr>Support prioritaire</span><span data-en>Priority support</span></li>
-      </ul>
-    </div>
+<!-- ============ DEVELOPERS ============ -->
+<section id="developers" class="sect" style="border-top:0">
+  <div class="max pad dev">
+    <div class="rv"><span class="eyebrow" data-t="nav.dev"></span><h2 data-t="dev.title"></h2><p style="margin-top:16px;color:var(--muted)" data-t="dev.sub"></p>
+      <ul class="pts">
+        <li><span><svg class="i"><use href="#check"/></svg></span><b style="font-weight:400" data-t="dev.p1"></b></li>
+        <li><span><svg class="i"><use href="#check"/></svg></span><b style="font-weight:400" data-t="dev.p2"></b></li>
+        <li><span><svg class="i"><use href="#check"/></svg></span><b style="font-weight:400" data-t="dev.p3"></b></li>
+        <li><span><svg class="i"><use href="#check"/></svg></span><b style="font-weight:400" data-t="dev.p4"></b></li>
+      </ul></div>
+    <div class="code rv">
+      <div class="hd"><div class="tb" role="tablist"><button role="tab" aria-selected="true" data-code="0">SwiftUI</button><button role="tab" aria-selected="false" data-code="1">React Native</button></div>
+        <button class="cp" id="copy" type="button"><svg class="i" style="font-size:12px"><use href="#copy"/></svg><span data-t="dev.copy"></span></button></div>
+<pre tabindex="0"><code><span class="c">// The key comes from your build configuration, never from source code.</span>
+<span class="t2">Nexora</span>.<span class="f">configure</span>(apiKey: key, host: <span class="t2">URL</span>(string: <span class="s">"https://your-nexora-host"</span>)!)
 
-    <div class="plan">
-      <h3>Business</h3>
-      <p><span data-fr>Pour les organisations qui ont besoin de contrôle et de conformité.</span><span data-en>For organisations that need control and compliance.</span></p>
-      <div class="price"><b data-price="24|20">20 €</b><span><span data-fr>par utilisateur / mois</span><span data-en>per user / month</span></span></div>
-      <div class="bill" data-bill><span data-fr>facturé annuellement</span><span data-en>billed yearly</span></div>
-      <a class="btn" href="#" data-plan="Business"><span data-fr>Choisir Business</span><span data-en>Choose Business</span></a>
-      <ul>
-        <li class="lead2"><span data-fr>Tout le plan Pro, plus :</span><span data-en>Everything in Pro, plus:</span></li>
-        <li><span data-fr>SSO et rôles avancés</span><span data-en>SSO and advanced roles</span></li>
-        <li><span data-fr>Journal d'audit</span><span data-en>Audit log</span></li>
-        <li><span data-fr>12 mois d'historique analytics</span><span data-en>12 months of analytics history</span></li>
-        <li><span data-fr>Support dédié</span><span data-en>Dedicated support</span></li>
-      </ul>
+<span class="t2">Button</span>(<span class="s">"Subscribe"</span>) {
+    <span class="t2">Nexora</span>.shared.<span class="f">track</span>(<span class="s">"subscribe_tapped"</span>, properties: [<span class="s">"plan"</span>: <span class="s">"pro"</span>])
+}
+.<span class="f">nexoraScreen</span>(<span class="s">"paywall"</span>)        <span class="c">// sends screen_view</span></code></pre>
+<pre tabindex="0" hidden><code><span class="c">// Use the development key in __DEV__, the production key otherwise.</span>
+<span class="t2">Nexora</span>.<span class="f">configure</span>({
+  apiKey: <span class="v">process</span>.<span class="v">env</span>.<span class="v">EXPO_PUBLIC_NEXORA_KEY</span>!,
+  host: <span class="s">"https://your-nexora-host"</span>,
+  appVersion: <span class="s">"1.4.0"</span>,
+  storage: <span class="v">AsyncStorage</span>,
+});
+
+<span class="t2">Nexora</span>.<span class="f">track</span>(<span class="s">"subscribe_tapped"</span>, { plan: <span class="s">"pro"</span> });
+<span class="f">useNexoraScreen</span>(<span class="s">"paywall"</span>);     <span class="c">// sends screen_view</span></code></pre>
     </div>
   </div>
+</section>
 
-  <div class="soon" id="soon" role="status">
-    <span>🕒</span>
-    <span id="soon-msg"><span data-fr>Le paiement en ligne arrive bientôt — toutes les fonctions sont gratuites pendant la bêta.</span><span data-en>Online payment is coming soon — every feature is free during the beta.</span></span>
+<!-- ============ PRICING ============ -->
+<section id="pricing" class="max pad">
+  <div class="head rv"><span class="eyebrow" data-t="nav.pricing"></span><h2 data-t="priceTitle"></h2><p data-t="priceSub"></p>
+    <div class="seg" role="radiogroup"><button role="radio" aria-checked="false" data-per="0"><span data-t="monthly"></span></button><button role="radio" aria-checked="true" data-per="1"><span data-t="yearly"></span><em data-t="save"></em></button></div>
   </div>
-</div></section>
+  <div class="plans" id="plans"></div>
+</section>
 
-<section id="faq" style="padding-top:0"><div class="wrap center">
-  <div class="eyebrow">FAQ</div>
-  <h2><span data-fr>Questions fréquentes</span><span data-en>Frequently asked questions</span></h2>
-  <div class="faq">
-    <details><summary><span data-fr>Le plan Gratuit est-il vraiment gratuit ?</span><span data-en>Is the Free plan really free?</span></summary><p><span data-fr>Oui. Pas de carte bancaire, pas de limite de durée. Vous ne payez que si vous passez à un plan payant.</span><span data-en>Yes. No credit card, no time limit. You only pay if you move to a paid plan.</span></p></details>
-    <details><summary><span data-fr>Comment fonctionne le paiement ?</span><span data-en>How does payment work?</span></summary><p><span data-fr>Le paiement en ligne n'est pas encore actif. Pendant la bêta, toutes les fonctions sont gratuites, et vous serez prévenu avant qu'un plan devienne payant.</span><span data-en>Online payment is not live yet. During the beta every feature is available for free, and you will be told before any plan becomes paid.</span></p></details>
-    <details><summary><span data-fr>Où sont stockées mes données ?</span><span data-en>Where is my data stored?</span></summary><p><span data-fr>Pendant la bêta, votre workspace vit dans votre navigateur. Une version hébergée avec synchronisation entre appareils et partage d'équipe est la prochaine grande étape.</span><span data-en>During the beta your workspace lives in your browser. A hosted version with cross-device sync and team sharing is the next big step.</span></p></details>
-    <details><summary><span data-fr>Comment me connecter ?</span><span data-en>How do I sign in?</span></summary><p><span data-fr>Avec un code de vérification envoyé par e-mail ou SMS, ou avec un lien magique. Aucun mot de passe à retenir.</span><span data-en>With a verification code sent by email or SMS, or with a magic link. No password to remember.</span></p></details>
-    <details><summary><span data-fr>Puis-je changer ou annuler mon plan ?</span><span data-en>Can I change or cancel my plan?</span></summary><p><span data-fr>À tout moment. Les changements s'appliquent à la prochaine période et vous gardez vos données si vous revenez au plan Gratuit.</span><span data-en>At any time. Changes apply to the next billing period and you keep your data if you go back to Free.</span></p></details>
-  </div>
-</div></section>
+<!-- ============ FAQ ============ -->
+<section id="faq" class="faq">
+  <h2 class="center rv" style="margin:0" data-t="faqTitle"></h2>
+  <div class="faqbox" id="faqbox"></div>
+</section>
 
-<div class="final">
-  <h2><span data-fr>Prêt à réunir votre produit au même endroit ?</span><span data-en>Ready to bring your product into one place?</span></h2>
-  <p><span data-fr>Créez votre workspace en moins d'une minute, avec une courte configuration guidée.</span><span data-en>Create your workspace in under a minute, with a short guided setup.</span></p>
-  <a class="btn" href="#top"><span data-fr>Commencer gratuitement</span><span data-en>Start for free</span></a>
-</div>
-<footer><div class="wrap"><b>Nexora</b> · <span data-fr>Planifier · Documenter · Designer · Construire · Mesurer</span><span data-en>Plan · Document · Design · Build · Measure</span><br>© 2026 Nexora. <span data-fr>Tous droits réservés.</span><span data-en>All rights reserved.</span></div></footer>
+<!-- ============ FINAL CTA ============ -->
+<section style="padding:0 20px 80px">
+  <div class="final rv"><div class="lp-grid" aria-hidden="true"></div>
+    <h2 data-t="ctaTitle"></h2><p data-t="ctaSub"></p>
+    <a class="btn go" href="#"><span data-t="heroCta"></span><svg class="i"><use href="#arrow-right"/></svg></a></div>
+</section>
+</main>
+
+<footer><div class="max row"><span class="logo"><b>N</b> Nexora</span><span data-t="footer"></span><span>© 2026 Nexora. <span data-t="rights"></span></span></div></footer>
+<div id="toast" role="status"><b></b><span></span></div>
 
 <script>
-(function(){
-  var root=document.documentElement, store={};
-  try{store=window.localStorage}catch(e){}
-  function get(k){try{return store.getItem(k)}catch(e){return null}}
-  function set(k,v){try{store.setItem(k,v)}catch(e){}}
-  var lang=get('nx-lang')||((navigator.language||'fr').slice(0,2)==='en'?'en':'fr');
-  var theme=get('nx-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
-  var yearly=true, lastPlan='';
-  function apply(){
-    root.lang=lang; root.dataset.theme=theme;
-    document.getElementById('lang').textContent=lang==='fr'?'EN':'FR';
-    document.querySelectorAll('[data-price]').forEach(function(el){var p=el.dataset.price.split('|');el.textContent=(yearly?p[1]:p[0])+' €'});
-    document.querySelectorAll('[data-bill]').forEach(function(el){
-      el.innerHTML=yearly?'<span data-fr>facturé annuellement</span><span data-en>billed yearly</span>':'<span data-fr>facturé mensuellement</span><span data-en>billed monthly</span>';
-    });
-    document.querySelectorAll('[data-period]').forEach(function(b){b.setAttribute('aria-checked',String((b.dataset.period==='y')===yearly))});
-    var m=document.getElementById('soon-msg');
-    m.innerHTML=lastPlan
-      ?'<span data-fr>'+lastPlan+' est noté. Le paiement en ligne arrive bientôt — toutes les fonctions sont gratuites pendant la bêta.</span><span data-en>'+lastPlan+' is noted. Online payment is coming soon — every feature is free during the beta.</span>'
-      :'<span data-fr>Le paiement en ligne arrive bientôt — toutes les fonctions sont gratuites pendant la bêta.</span><span data-en>Online payment is coming soon — every feature is free during the beta.</span>';
-  }
-  document.getElementById('lang').onclick=function(){lang=lang==='fr'?'en':'fr';set('nx-lang',lang);apply()};
-  document.getElementById('theme').onclick=function(){theme=theme==='dark'?'light':'dark';set('nx-theme',theme);apply()};
-  document.querySelectorAll('[data-period]').forEach(function(b){b.onclick=function(){yearly=b.dataset.period==='y';apply()}});
-  document.querySelectorAll('[data-plan]').forEach(function(a){a.onclick=function(e){e.preventDefault();lastPlan=a.dataset.plan;apply()}});
-  apply();
-})();
+document.documentElement.classList.add('js');
+// Presentation only: nothing is connected to the app. The "Start" buttons just scroll to the pricing section.
+var APP_URL = '#pricing';
+
+var D = {
+ en:{
+  'nav.product':'Product','nav.connected':'How it connects','nav.dev':'Developers','nav.pricing':'Pricing','nav.faq':'FAQ','nav.signin':'Sign in','nav.start':'Start free',
+  'badge':'Free during the beta · every feature included','hero1':'One workspace.','hero2':'Your whole product.',
+  'heroSub':'Plan sprints, write specs, design screens, follow your code and measure real usage — in one place where every ticket knows its design, its doc and its pull request.',
+  'heroCta':'Start for free','heroCta2':'See how it connects','heroNote':'No credit card · Sign in with a code, no password','replaces':'Replaces',
+  'tab.projects':'Projects','tab.docs':'Docs','tab.design':'Design','tab.analytics':'Analytics',
+  'tab.d0':'Boards, sprints and a roadmap that follow your deadlines.','tab.d1':'Specs and notes linked to the tickets they describe.','tab.d2':'A canvas with auto-layout, prototypes and code handoff.','tab.d3':'Funnels and retention from your own app events.',
+  'mock.todo':'To do','mock.doing':'In progress','mock.done':'Done','mock.c1':'Onboarding flow','mock.c2':'Billing page','mock.c3':'Webhook retries','mock.c4':'Search palette','mock.c5':'Dark mode polish','mock.c6':'Sprint report',
+  'mock.doc1':'Authentication spec','mock.doc2':'Users sign in with a one-time code sent by email or SMS.','mock.doc3':'Open question','mock.doc4':'Should magic links expire after 10 minutes?',
+  'mock.funnel':'Signup funnel','mock.f1':'Visited','mock.f2':'Signed up','mock.f3':'Activated','mock.f4':'Subscribed','mock.ret':'Retention, week 4','mock.gap':'Gap',
+  'conn.title':'Everything is linked, nothing gets lost','conn.sub':'A ticket is not an island. Open one and you land on the pull request that ships it, the design it implements, the doc that explains it and the events that prove it works.',
+  'conn.issue':'Add Sign in with Apple','conn.pr':'Pull request #88 · merged','conn.design':'Design · Sign-in screen','conn.doc':'Doc · Authentication spec','conn.event':'Event · signup_completed','conn.sprint':'Sprint 24',
+  'flowTitle':'From idea to insight, without leaving the workspace','flow':['Idea','Roadmap','Sprint','Issue','Design','Docs','Code','Deploy','Analytics','Insights'],
+  'bento.title':'Eight modules. One data model.','bento.sub':'Nothing to glue together: every module reads and writes the same projects, people and deadlines.',
+  'b.pm':'Projects & sprints','b.pmD':'Issues, boards, sprints, roadmap and milestones, with blockers and deadlines in view.',
+  'b.docs':'Documents','b.docsD':'A rich editor with templates, tables, callouts, mentions and live links to tickets.',
+  'b.ghD':'Commits, pull requests and deployments attached to the tickets they ship.',
+  'b.designD':'Auto-layout, components with variants, prototypes, and handoff to CSS, React, React Native and SwiftUI.',
+  'b.analyticsD':'Events, funnels and retention, with SDKs for Swift and React Native.',
+  'b.notifD':'Mentions, reviews and deadline reminders, with quiet hours and digest.',
+  'b.growth':'Marketing & ASO','b.growthD':'Campaigns, attribution and App Store keyword rankings next to your product data.',
+  'b.wsD':'Private workspaces, sign-in by code or magic link, French and English, light and dark.',
+  'dev.title':'Built for people who ship','dev.sub':'Add analytics to your app in a few lines, with keys that stay in your build configuration.',
+  'dev.p1':'Typed SDKs for Swift and React Native','dev.p2':'Separate test and live keys for every project','dev.p3':'Keys live in xcconfig or .env, never in source code','dev.p4':'Install, session and purchase events out of the box','dev.copy':'Copy','dev.copied':'Copied',
+  'priceTitle':'Simple pricing that grows with your team','priceSub':'Start free. Upgrade when the team does.','monthly':'Monthly','yearly':'Yearly','save':'2 months free',
+  'perUser':'per user / month','billedYearly':'billed yearly','billedMonthly':'billed monthly','forever':'free forever','popular':'Most popular',
+  'p.free':'Free','p.freeD':'For side projects and small teams getting started.','p.freeCta':'Start for free',
+  'p.pro':'Pro','p.proD':'For product teams that ship every week.','p.proCta':'Choose Pro',
+  'p.biz':'Business','p.bizD':'For organisations that need control and security.','p.bizCta':'Choose Business',
+  'p.free1':'Up to 3 members','p.free2':'2 projects','p.free3':'Issues, sprints and roadmap','p.free4':'Documents and 3 design files','p.free5':'Community support',
+  'p.pro0':'Everything in Free, plus:','p.pro1':'Unlimited members, projects and designs','p.pro2':'GitHub integration','p.pro3':'Product analytics','p.pro4':'Private workspaces','p.pro5':'Priority support',
+  'p.biz0':'Everything in Pro, plus:','p.biz1':'SSO and advanced roles','p.biz2':'Audit log','p.biz3':'12 months of analytics history','p.biz4':'Dedicated support',
+  'billingSoon':'Online payment is coming soon','billingSoonD':'{plan} is noted. Every feature is free during the beta.','billing':'Billing period',
+  'faqTitle':'Frequently asked questions',
+  'q':[['Is the Free plan really free?','Yes. No credit card, no time limit. You only pay if you move to a paid plan.'],['How does payment work?','Online payment is not live yet. During the beta every feature is available for free, and you will be told before any plan becomes paid.'],['Where is my data stored?','During the beta your workspace lives in your browser. A hosted version with cross-device sync and team sharing is the next big step.'],['How do I sign in?','With a verification code sent by email or SMS, or with a magic link. No password to remember.'],['Can I change or cancel my plan?','At any time. Changes apply to the next billing period and you keep your data if you go back to Free.']],
+  'ctaTitle':'Ready to bring your product into one place?','ctaSub':'Create your workspace in under a minute, with a short guided setup.',
+  'footer':'Plan · Document · Design · Build · Measure','rights':'All rights reserved.'
+ },
+ fr:{
+  'nav.product':'Produit','nav.connected':'Tout est relié','nav.dev':'Développeurs','nav.pricing':'Abonnements','nav.faq':'FAQ','nav.signin':'Se connecter','nav.start':'Commencer',
+  'badge':'Gratuit pendant la bêta · toutes les fonctions incluses','hero1':'Un seul workspace.','hero2':'Tout votre produit.',
+  'heroSub':'Planifiez vos sprints, rédigez vos specs, dessinez vos écrans, suivez votre code et mesurez l\'usage réel — au même endroit, où chaque ticket connaît son design, son doc et sa pull request.',
+  'heroCta':'Commencer gratuitement','heroCta2':'Voir comment tout se relie','heroNote':'Sans carte bancaire · Connexion par code, sans mot de passe','replaces':'Remplace',
+  'tab.projects':'Projets','tab.docs':'Docs','tab.design':'Design','tab.analytics':'Analytics',
+  'tab.d0':'Boards, sprints et roadmap qui suivent vos échéances.','tab.d1':'Specs et notes reliées aux tickets qu\'elles décrivent.','tab.d2':'Un canevas avec auto-layout, prototypes et export du code.','tab.d3':'Funnels et rétention à partir des événements de votre app.',
+  'mock.todo':'À faire','mock.doing':'En cours','mock.done':'Terminé','mock.c1':'Parcours d\'accueil','mock.c2':'Page de facturation','mock.c3':'Relances de webhooks','mock.c4':'Palette de recherche','mock.c5':'Finitions du mode sombre','mock.c6':'Rapport de sprint',
+  'mock.doc1':'Spécification de l\'authentification','mock.doc2':'Les utilisateurs se connectent avec un code à usage unique envoyé par e-mail ou SMS.','mock.doc3':'Question ouverte','mock.doc4':'Les liens magiques doivent-ils expirer après 10 minutes ?',
+  'mock.funnel':'Funnel d\'inscription','mock.f1':'Visites','mock.f2':'Inscrits','mock.f3':'Activés','mock.f4':'Abonnés','mock.ret':'Rétention, semaine 4','mock.gap':'Espacement',
+  'conn.title':'Tout est relié, rien ne se perd','conn.sub':'Un ticket n\'est pas une île. Ouvrez-en un et vous arrivez sur la pull request qui le livre, le design qu\'il implémente, le doc qui l\'explique et les événements qui prouvent qu\'il marche.',
+  'conn.issue':'Ajouter Sign in with Apple','conn.pr':'Pull request #88 · fusionnée','conn.design':'Design · Écran de connexion','conn.doc':'Doc · Spécification d\'authentification','conn.event':'Événement · signup_completed','conn.sprint':'Sprint 24',
+  'flowTitle':'De l\'idée à l\'insight, sans quitter le workspace','flow':['Idée','Roadmap','Sprint','Ticket','Design','Docs','Code','Déploiement','Analytics','Insights'],
+  'bento.title':'Huit modules. Un seul modèle de données.','bento.sub':'Rien à assembler : chaque module lit et écrit les mêmes projets, personnes et échéances.',
+  'b.pm':'Projets & sprints','b.pmD':'Tickets, boards, sprints, roadmap et jalons, avec blocages et échéances en vue.',
+  'b.docs':'Documents','b.docsD':'Un éditeur riche avec modèles, tableaux, encadrés, mentions et liens vivants vers les tickets.',
+  'b.ghD':'Commits, pull requests et déploiements rattachés aux tickets qu\'ils livrent.',
+  'b.designD':'Auto-layout, composants à variantes, prototypes et export vers CSS, React, React Native et SwiftUI.',
+  'b.analyticsD':'Événements, funnels et rétention, avec des SDK pour Swift et React Native.',
+  'b.notifD':'Mentions, revues et rappels d\'échéances, avec heures calmes et résumé.',
+  'b.growth':'Marketing & ASO','b.growthD':'Campagnes, attribution et positions de mots-clés App Store à côté de vos données produit.',
+  'b.wsD':'Workspaces privés, connexion par code ou lien magique, français et anglais, clair et sombre.',
+  'dev.title':'Pensé pour ceux qui livrent','dev.sub':'Ajoutez l\'analytics à votre app en quelques lignes, avec des clés qui restent dans votre configuration de build.',
+  'dev.p1':'SDK typés pour Swift et React Native','dev.p2':'Clés de test et de production séparées pour chaque projet','dev.p3':'Les clés vivent dans xcconfig ou .env, jamais dans le code source','dev.p4':'Événements d\'installation, de session et d\'achat inclus','dev.copy':'Copier','dev.copied':'Copié',
+  'priceTitle':'Une tarification simple qui grandit avec l\'équipe','priceSub':'Commencez gratuitement. Passez au payant quand l\'équipe grandit.','monthly':'Mensuel','yearly':'Annuel','save':'2 mois offerts',
+  'perUser':'par utilisateur / mois','billedYearly':'facturé annuellement','billedMonthly':'facturé mensuellement','forever':'gratuit pour toujours','popular':'Le plus choisi',
+  'p.free':'Gratuit','p.freeD':'Pour les projets perso et les petites équipes qui démarrent.','p.freeCta':'Commencer gratuitement',
+  'p.pro':'Pro','p.proD':'Pour les équipes produit qui livrent chaque semaine.','p.proCta':'Choisir Pro',
+  'p.biz':'Business','p.bizD':'Pour les organisations qui ont besoin de contrôle et de sécurité.','p.bizCta':'Choisir Business',
+  'p.free1':'Jusqu\'à 3 membres','p.free2':'2 projets','p.free3':'Tickets, sprints et roadmap','p.free4':'Documents et 3 fichiers de design','p.free5':'Support communautaire',
+  'p.pro0':'Tout le plan Gratuit, plus :','p.pro1':'Membres, projets et designs illimités','p.pro2':'Intégration GitHub','p.pro3':'Analytics produit','p.pro4':'Workspaces privés','p.pro5':'Support prioritaire',
+  'p.biz0':'Tout le plan Pro, plus :','p.biz1':'SSO et rôles avancés','p.biz2':'Journal d\'audit','p.biz3':'12 mois d\'historique analytics','p.biz4':'Support dédié',
+  'billingSoon':'Le paiement en ligne arrive bientôt','billingSoonD':'{plan} est noté. Toutes les fonctions sont gratuites pendant la bêta.','billing':'Période de facturation',
+  'faqTitle':'Questions fréquentes',
+  'q':[['Le plan Gratuit est-il vraiment gratuit ?','Oui. Pas de carte bancaire, pas de limite de durée. Vous ne payez que si vous passez à un plan payant.'],['Comment fonctionne le paiement ?','Le paiement en ligne n\'est pas encore actif. Pendant la bêta, toutes les fonctions sont gratuites, et vous serez prévenu avant qu\'un plan devienne payant.'],['Où sont stockées mes données ?','Pendant la bêta, votre workspace vit dans votre navigateur. Une version hébergée avec synchronisation entre appareils et partage d\'équipe est la prochaine grande étape.'],['Comment me connecter ?','Avec un code de vérification envoyé par e-mail ou SMS, ou avec un lien magique. Aucun mot de passe à retenir.'],['Puis-je changer ou annuler mon plan ?','À tout moment. Les changements s\'appliquent à la prochaine période et vous gardez vos données si vous revenez au plan Gratuit.']],
+  'ctaTitle':'Prêt à réunir votre produit au même endroit ?','ctaSub':'Créez votre workspace en moins d\'une minute, avec une courte configuration guidée.',
+  'footer':'Planifier · Documenter · Designer · Construire · Mesurer','rights':'Tous droits réservés.'
+ }
+};
+var PLANS=[
+ {id:'free',n:'p.free',d:'p.freeD',c:'p.freeCta',m:0,y:0,items:['p.free1','p.free2','p.free3','p.free4','p.free5']},
+ {id:'pro',n:'p.pro',d:'p.proD',c:'p.proCta',m:12,y:10,lead:'p.pro0',items:['p.pro1','p.pro2','p.pro3','p.pro4','p.pro5'],pop:1},
+ {id:'biz',n:'p.biz',d:'p.bizD',c:'p.bizCta',m:24,y:20,lead:'p.biz0',items:['p.biz1','p.biz2','p.biz3','p.biz4']}
+];
+var CODES=[];
+var S={lang:'fr',theme:'light',yearly:true,faq:0,tab:0,paused:false};
+function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
+S.lang=ls('nx-lang')||((navigator.language||'fr').slice(0,2)==='en'?'en':'fr');
+S.theme=ls('nx-theme')||'light';
+function T(k){return D[S.lang][k]}
+function $(s,r){return (r||document).querySelector(s)}function $$(s,r){return [].slice.call((r||document).querySelectorAll(s))}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+
+// Phone with the red padding/gap overlay (same as the design editor)
+$$('[data-phone]').forEach(function(p){p.innerHTML='<span class="rt"></span><span class="rl"></span><span class="tagr" style="left:50%;top:2px;transform:translateX(-50%)">24</span><div class="stack"><div style="height:12px;width:64px;border-radius:4px;background:var(--fg);opacity:.8"></div><div class="bar2" style="width:100%"></div><div class="gap"><span class="tagr">16</span></div><div style="height:32px;border-radius:8px;background:var(--accent)"></div><div style="height:32px;border-radius:8px;border:1px solid var(--border-strong)"></div></div>'});
+
+function renderPricing(){
+  $('#plans').innerHTML=PLANS.map(function(p){
+    var price=S.yearly?p.y:p.m;
+    return '<div class="plan'+(p.pop?' pop':'')+'">'+(p.pop?'<span class="pp">'+T('popular')+'</span>':'')+
+    '<h3>'+T(p.n)+'</h3><p class="d">'+T(p.d)+'</p>'+
+    '<div class="price"><b>'+price+' €</b>'+(p.m>0?'<span>'+T('perUser')+'</span>':'')+'</div>'+
+    '<p class="bill">'+(p.m===0?T('forever'):S.yearly?T('billedYearly'):T('billedMonthly'))+'</p>'+
+    '<button class="btn '+(p.pop?'primary':'line')+'" data-plan="'+p.id+'">'+T(p.c)+'</button>'+
+    '<ul>'+(p.lead?'<li class="lead">'+T(p.lead)+'</li>':'')+p.items.map(function(k){return '<li><svg class="i"><use href="#check"/></svg><span>'+T(k)+'</span></li>'}).join('')+'</ul></div>';
+  }).join('');
+  $$('[data-per]').forEach(function(b){b.setAttribute('aria-checked',String((b.dataset.per==='1')===S.yearly))});
+}
+function renderFaq(){
+  $('#faqbox').innerHTML=T('q').map(function(q,i){var o=S.faq===i;
+    return '<div><h3><button aria-expanded="'+o+'" aria-controls="fq'+i+'" data-faq="'+i+'">'+esc(q[0])+'<svg class="i" style="font-size:16px"><use href="#chev"/></svg></button></h3><div id="fq'+i+'" class="a"'+(o?'':' hidden')+'>'+esc(q[1])+'</div></div>';
+  }).join('');
+  $$('[data-faq]').forEach(function(b){b.onclick=function(){var i=+b.dataset.faq;S.faq=S.faq===i?null:i;renderFaq()}});
+}
+function renderFlow(){
+  var f=T('flow');$('#flow').innerHTML=f.map(function(x,i){return '<li><span>'+x+'</span>'+(i<f.length-1?'<span aria-hidden="true">→</span>':'')+'</li>'}).join('');
+}
+function apply(){
+  document.documentElement.lang=S.lang;document.documentElement.dataset.theme=S.theme;
+  $$('[data-t]').forEach(function(el){var v=T(el.dataset.t);if(typeof v==='string')el.textContent=v});
+  $$('.lang').forEach(function(b){b.textContent=S.lang==='fr'?'EN':'FR'});
+  $('#tabdesc').textContent=T('tab.d'+S.tab);
+  document.title='Nexora — '+T('hero1')+' '+T('hero2');
+  renderPricing();renderFaq();renderFlow();
+  $$('.go').forEach(function(a){a.href=APP_URL});
+}
+$$('.lang').forEach(function(b){b.onclick=function(){S.lang=S.lang==='fr'?'en':'fr';ls('nx-lang',S.lang);apply()}});
+$$('.theme').forEach(function(b){b.onclick=function(){S.theme=S.theme==='dark'?'light':'dark';ls('nx-theme',S.theme);apply()}});
+$$('[data-per]').forEach(function(b){b.onclick=function(){S.yearly=b.dataset.per==='1';renderPricing()}});
+
+// mobile menu
+var bg=$('#burger'),mn=$('#mnav');
+bg.onclick=function(){var o=!mn.classList.contains('open');mn.classList.toggle('open',o);bg.setAttribute('aria-expanded',o);bg.innerHTML='<svg class="i"><use href="#'+(o?'x':'menu')+'"/></svg>'};
+$$('#mnav a').forEach(function(a){a.addEventListener('click',function(){mn.classList.remove('open');bg.setAttribute('aria-expanded',false);bg.innerHTML='<svg class="i"><use href="#menu"/></svg>'})});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&mn.classList.contains('open'))bg.click()});
+
+// showcase: auto-rotates every 6 s, paused on hover/focus
+var tabs=$$('.tab'),panels=$$('.panel'),show=$('#show'),timer;
+function setTab(i,pause){
+  S.tab=i;if(pause)S.paused=true;
+  tabs.forEach(function(t,n){t.setAttribute('aria-selected',n===i);var b=$('.bar',t);b.style.animation='none';void b.offsetWidth;b.style.animation=''});
+  panels.forEach(function(p,n){p.classList.toggle('on',n===i)});
+  $('#tabdesc').textContent=T('tab.d'+i);show.classList.toggle('paused',S.paused);schedule();
+}
+function schedule(){clearTimeout(timer);if(S.paused)return;timer=setTimeout(function(){setTab((S.tab+1)%tabs.length)},6000)}
+tabs.forEach(function(t,n){t.onclick=function(){setTab(n,true)}});
+['mouseenter','focusin'].forEach(function(ev){show.addEventListener(ev,function(){S.paused=true;show.classList.add('paused');clearTimeout(timer)})});
+['mouseleave','focusout'].forEach(function(ev){show.addEventListener(ev,function(){S.paused=false;setTab(S.tab)})});
+
+// code tabs + copy
+var pres=$$('.code pre'),SNIP=pres.map(function(p){return p.textContent});
+$$('[data-code]').forEach(function(b){b.onclick=function(){var i=+b.dataset.code;S.code=i;$$('[data-code]').forEach(function(x){x.setAttribute('aria-selected',x===b)});pres.forEach(function(p,n){p.hidden=n!==i})}});
+S.code=0;
+$('#copy').onclick=function(){var b=this;(navigator.clipboard?navigator.clipboard.writeText(SNIP[S.code]):Promise.reject()).then(function(){toast(T('dev.copied'),'')}).catch(function(){})};
+
+// toast
+var tt;function toast(a,b){var t=$('#toast');$('b',t).textContent=a;$('span',t).textContent=b;t.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){t.classList.remove('show')},3500)}
+
+// reveal on scroll
+if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -60px 0px'});$$('.rv').forEach(function(el){io.observe(el)})}
+else $$('.rv').forEach(function(el){el.classList.add('in')});
+
+apply();schedule();
 </script>
 </body>
 </html>
